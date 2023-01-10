@@ -12,5 +12,34 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-syntax = "proto3";
-package stargazer.v1;
+package types
+
+// ==============================================================================
+// Transaction <-> MsgEthereumTx
+// ==============================================================================
+
+// `ToEthereumTx` converts the `MsgEthereumTx` to an Ethereum transaction.
+func (msg *MsgEthereumTx) ToEthereumTransaction() (*Transaction, error) {
+	txData, err := UnpackTxData(msg.Inner)
+	if err != nil {
+		return nil, err
+	}
+	return NewTx(txData), nil
+}
+
+// `FromEthereumTx` populates `msg` with the data from the Ethereum transaction.
+func (msg *MsgEthereumTx) FromEthereumTx(tx *Transaction) error {
+	txData, err := NewTxDataFromTx(tx)
+	if err != nil {
+		return err
+	}
+
+	anyTxData, err := PackTxData(txData)
+	if err != nil {
+		return err
+	}
+
+	msg.Inner = anyTxData
+	msg.Hash = tx.Hash().Bytes()
+	return nil
+}

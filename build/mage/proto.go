@@ -53,9 +53,9 @@ func ProtoGen() error {
 		return err
 	}
 
-	if err = ProtoDockerBuild(); err != nil {
-		return err
-	}
+	// if err = ProtoDockerBuild(); err != nil {
+	// 	return err
+	// }
 
 	return dockerRunProtoImage(dir)(
 		"sh", "./build/scripts/proto/proto_generate.sh",

@@ -1,0 +1,59 @@
+// Copyright (C) 2023, Berachain Foundation. All rights reserved.
+// See the file LICENSE for licensing terms.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+syntax = "proto3";
+
+package stargazer.core.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "github.com/berachain/stargazer/core/types";
+
+// // Msg defines the evm Msg service.
+// service Msg {
+//   // EthereumTx defines a method submitting Ethereum transactions.
+//   rpc EthereumTx(MsgEthereumTx) returns (MsgEthereumTxResponse) {
+//     option (google.api.http).post = "/ethermint/evm/v1/ethereum_tx";
+//   };
+// }
+
+// // Transaction is an Ethereum transaction.
+// type Transaction struct {
+// 	inner TxData    // Consensus contents of a transaction
+// 	time  time.Time // Time first seen locally (spam avoidance)
+
+// 	// caches
+// 	hash atomic.Value
+// 	size atomic.Value
+// 	from atomic.Value
+// }
+
+// MsgEthereumTx encapsulates an Ethereum transaction as an SDK message.
+message MsgEthereumTx {
+  option (gogoproto.goproto_getters) = false;
+
+  // inner represents the `inner TxData` field in go-ethereum.
+  google.protobuf.Any inner = 1;
+
+  // hash represents the 'hash atomic.Value' field in go-ethereum. It is required
+  // to be the correct length and will cause the transaction to fail if it is not.
+  bytes hash = 2 [(gogoproto.moretags) = "rlp:\"-\""];
+
+  // from is the ethereum signer address in hex format. This address value is checked
+  // against the address derived from the signature (V, R, S) using the
+  // secp256k1 elliptic curve. It represents the 'hash atomic.Value' field in go-ethereum and is
+  // required to be the correct length and will cause the transaction to fail if it is not.
+  bytes from = 3;
+}
