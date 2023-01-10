@@ -17,12 +17,13 @@ package types
 import "github.com/ethereum/go-ethereum/core/types"
 
 type (
+	AccessList  = types.AccessList
 	Transaction = types.Transaction
-	TxData      = types.TxData
+	EthTxData   = types.TxData
 )
 
 var (
-	NewTx            = types.NewTx
+	EthNewTx         = types.NewTx
 	AccessListTxType = types.AccessListTxType
 	DynamicFeeTxType = types.DynamicFeeTxType
 	LegacyTxType     = types.LegacyTxType

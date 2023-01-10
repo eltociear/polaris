@@ -57,3 +57,8 @@ message MsgEthereumTx {
   // required to be the correct length and will cause the transaction to fail if it is not.
   bytes from = 3;
 }
+
+// ExtensionOptionsEthereumTx is an extension option for ethereum transactions
+message ExtensionOptionsEthereumTx {
+  option (gogoproto.goproto_getters) = false;
+}
