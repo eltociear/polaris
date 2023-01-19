@@ -195,3 +195,5 @@ pkg/contracts/cache
 
 # xml
 *.xml
+
+vendor
