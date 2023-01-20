@@ -1,0 +1,28 @@
+services:
+  redisdb:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    container_name: redisdb-container
+    command: ["redis-server", "--bind", "redisdb", "--port", "6379"]
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+       - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+networks:
+  postgres:
+    driver: bridge
+volumes:
+    redis:
+    postgres:
