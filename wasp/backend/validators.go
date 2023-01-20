@@ -1,21 +1,22 @@
 package backend
 
 import (
-	"context"
 	"fmt"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 func (b *Backend) GetValidators() ([]stakingtypes.Validator, error) {
-
-	req := &stakingtypes.QueryValidatorsRequest{}
-	res, err := b.queryClient.Validators(context.Background(), req)
+	queryClient := b.queryClient
+	req := &stakingtypes.QueryValidatorsRequest{
+		Status: "BOND_STATUS_BONDED",
+	}
+	res, err := queryClient.Validators(b.ctx, req)
 
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
-	fmt.Println(res)
 	var v = res.GetValidators()
 	return v, nil
 }

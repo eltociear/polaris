@@ -40,12 +40,11 @@ type Backend struct {
 	allowUnprotectedTxs bool
 }
 
-// NewBackend creates a new Backend instance for cosmos and ethereum namespaces
+// // NewBackend creates a new Backend instance for cosmos and ethereum namespaces
 func NewBackend(
 	cc *grpc.ClientConn,
 	allowUnprotectedTxs bool,
 ) *Backend {
-
 	return &Backend{
 		ctx:                 context.Background(),
 		queryClient:         types.NewQueryClient(cc),
