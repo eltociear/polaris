@@ -27,19 +27,23 @@ func (repo *BlockRepo) CreateBlock(ctx context.Context, msg *stargazerproto.Crea
 		panic(err)
 	}
 
-	err = repo.db.RedisClient.Set(blockModel.GetRedisKey(), data)
+	req := &database.SetRequest{
+		RedisDb: blockModel.GetRedisDb(),
+		Key:     blockModel.GetRedisKey(),
+		Value:   data,
+	}
+
+	err = repo.db.Set(req, func() error {
+		err = repo.db.Gorm.Table(blockModel.GetTable()).Create(&blockModel).Error
+		return err
+	})
+
 	if err != nil {
 		return &stargazerproto.CreateBlockResponse{
 			Code: 1,
 		}
 	}
 
-	err = repo.db.Gorm.Table(blockModel.GetTable()).Create(&blockModel).Error
-	if err != nil {
-		return &stargazerproto.CreateBlockResponse{
-			Code: 1,
-		}
-	}
 	return &stargazerproto.CreateBlockResponse{
 		Code: 0,
 	}
@@ -49,21 +53,30 @@ func (repo *BlockRepo) GetBlock(ctx context.Context, msg *stargazerproto.ReadBlo
 	blockModel := models.FromGrpcBlockMessage(&stargazerproto.Block{
 		Number: msg.Number,
 	})
-	data, err := repo.db.RedisClient.Get(blockModel.GetRedisKey())
-	block := &stargazerproto.Block{}
-	if err != nil {
+	req := &database.GetRequest{
+		RedisDb: blockModel.GetRedisDb(),
+		Key:     blockModel.GetRedisKey(),
+	}
+	data, err := repo.db.Get(req, func() ([]byte, error) {
+		block := &stargazerproto.Block{}
 		result := repo.db.Gorm.Where("number = ?", blockModel.Number).First(&block)
 		if result.Error != nil {
-			panic(result.Error)
+			return nil, result.Error
 		}
-		return &stargazerproto.ReadBlockResponse{
+		protomsg := &stargazerproto.ReadBlockResponse{
 			Block: block,
 		}
+		data, err := proto.Marshal(protomsg)
+		return data, err
+	})
+	if err != nil {
+		panic(err)
 	}
 	byteData, err := utils.GetBytes(data)
 	if err != nil {
 		panic(err)
 	}
+	block := &stargazerproto.Block{}
 	err = proto.Unmarshal(byteData, block)
 	if err != nil {
 		panic(err)
@@ -71,5 +84,4 @@ func (repo *BlockRepo) GetBlock(ctx context.Context, msg *stargazerproto.ReadBlo
 	return &stargazerproto.ReadBlockResponse{
 		Block: block,
 	}
-
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/berachain/stargazer/wasp/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -44,4 +45,40 @@ func openGorm() *gorm.DB {
 		panic(err)
 	}
 	return dbClient
+}
+
+func (db *Database) Get(r *GetRequest, gormFunc func() ([]byte, error)) ([]byte, error) {
+	data, err := db.RedisClient.Get(r.Key)
+	if err != nil {
+		byteData, err := gormFunc()
+		if err != nil {
+			panic(err)
+		}
+		return byteData, nil
+	}
+	byteData, err := utils.GetBytes(data)
+	if err != nil {
+		panic(err)
+	}
+	return byteData, nil
+}
+
+func (db *Database) Set(r *SetRequest, gormFunc func() error) error {
+	err := gormFunc()
+	if err != nil {
+		return err
+	}
+	err = db.RedisClient.Set(r.Key, r.Value)
+	return err
+}
+
+type GetRequest struct {
+	RedisDb int64
+	Key     string
+}
+
+type SetRequest struct {
+	RedisDb int64
+	Key     string
+	Value   []byte
 }

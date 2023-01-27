@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/berachain/stargazer/wasp/database"
-	"github.com/berachain/stargazer/wasp/repository"
 )
 
 func main() {
@@ -10,7 +9,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	repos := repository.InitRepositories(db)
+	// repos := repository.InitRepositories(db)
 
-	repos.BlockRepo.GetBlock()
 }
