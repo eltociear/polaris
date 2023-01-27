@@ -38,7 +38,6 @@ func openGorm() *gorm.DB {
 		os.Getenv("POSTGRES_DB"),
 	)
 
-	// dbUri := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s",
 	dbClient, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 
 	if err != nil {
@@ -55,7 +54,12 @@ func (db *Database) Get(r *GetRequest, gormFunc func() ([]byte, error)) ([]byte,
 	if err != nil || data == nil {
 		fmt.Print("\nI AM IN PSQL\n")
 		data, err := gormFunc()
+		redisErr := db.RedisClient.Set(r.Key, data)
+		if redisErr != nil {
+			fmt.Print("shes fked bud")
+		}
 		return data, err
+
 	}
 	return data, err
 }
