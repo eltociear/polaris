@@ -1,4 +1,4 @@
-package types
+package query
 
 import (
 	"google.golang.org/grpc"
@@ -7,11 +7,11 @@ import (
 )
 
 type QueryClient struct {
-	stakingTypes.QueryClient
+	stakingClient stakingTypes.QueryClient
 }
 
 func NewQueryClient(cc *grpc.ClientConn) *QueryClient {
 	return &QueryClient{
-		QueryClient: stakingTypes.NewQueryClient(cc),
+		stakingClient: stakingTypes.NewQueryClient(cc),
 	}
 }

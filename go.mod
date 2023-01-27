@@ -314,7 +314,7 @@ require (
 	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/vuln v0.0.0-20221109205719-3af8368ee4fe // indirect
 	google.golang.org/genproto v0.0.0-20221118155620-16455021b5e6 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
+	google.golang.org/protobuf v1.28.1
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
