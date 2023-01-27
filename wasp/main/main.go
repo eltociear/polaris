@@ -11,13 +11,9 @@ import (
 	"github.com/berachain/stargazer/wasp/repository"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
+var exit = make(chan bool)
 
 func main() {
 	db, err := database.NewDatabase()
@@ -28,9 +24,8 @@ func main() {
 	repos := repository.InitRepositories(db)
 
 	go syncr(repos)
-	for {
-
-	}
+	<-exit // This blocks until the exit channel receives some input
+	fmt.Println("Done.")
 }
 
 func syncr(repos *repository.Repositories) {
@@ -44,6 +39,7 @@ func syncr(repos *repository.Repositories) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Print("Listening...")
 	for {
 		select {
 		case err := <-sub.Err():
