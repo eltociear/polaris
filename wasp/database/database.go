@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/berachain/stargazer/wasp/utils"
+	models "github.com/berachain/stargazer/wasp/models/block"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -30,12 +30,12 @@ func NewDatabase() (*Database, error) {
 }
 
 func openGorm() *gorm.DB {
-	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%s",
+	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		os.Getenv("POSTGRES_USER"),
 		os.Getenv("POSTGRES_PASSWORD"),
 		os.Getenv("POSTGRES_HOST"),
 		os.Getenv("POSTGRES_PORT"),
-		// os.Getenv("POSTGRES_DB"),
+		os.Getenv("POSTGRES_DB"),
 	)
 
 	// dbUri := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s",
@@ -44,23 +44,20 @@ func openGorm() *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
+
+	dbClient.AutoMigrate(&models.BlockModel{})
+
 	return dbClient
 }
 
 func (db *Database) Get(r *GetRequest, gormFunc func() ([]byte, error)) ([]byte, error) {
 	data, err := db.RedisClient.Get(r.Key)
-	if err != nil {
-		byteData, err := gormFunc()
-		if err != nil {
-			panic(err)
-		}
-		return byteData, nil
+	if err != nil || data == nil {
+		fmt.Print("\nI AM IN PSQL\n")
+		data, err := gormFunc()
+		return data, err
 	}
-	byteData, err := utils.GetBytes(data)
-	if err != nil {
-		panic(err)
-	}
-	return byteData, nil
+	return data, err
 }
 
 func (db *Database) Set(r *SetRequest, gormFunc func() error) error {

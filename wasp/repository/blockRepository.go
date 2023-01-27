@@ -2,11 +2,11 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/berachain/stargazer/wasp/database"
 	models "github.com/berachain/stargazer/wasp/models/block"
 	stargazerproto "github.com/berachain/stargazer/wasp/proto"
-	"github.com/berachain/stargazer/wasp/utils"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -34,8 +34,11 @@ func (repo *BlockRepo) CreateBlock(ctx context.Context, msg *stargazerproto.Crea
 	}
 
 	err = repo.db.Set(req, func() error {
-		err = repo.db.Gorm.Table(blockModel.GetTable()).Create(&blockModel).Error
-		return err
+		res := repo.db.Gorm.Create(&blockModel)
+		fmt.Print("\n")
+
+		fmt.Print(blockModel.ID)
+		return res.Error
 	})
 
 	if err != nil {
@@ -57,29 +60,29 @@ func (repo *BlockRepo) GetBlock(ctx context.Context, msg *stargazerproto.ReadBlo
 		RedisDb: blockModel.GetRedisDb(),
 		Key:     blockModel.GetRedisKey(),
 	}
+
 	data, err := repo.db.Get(req, func() ([]byte, error) {
-		block := &stargazerproto.Block{}
-		result := repo.db.Gorm.Where("number = ?", blockModel.Number).First(&block)
-		if result.Error != nil {
-			return nil, result.Error
+		response := &models.BlockModel{}
+		err := repo.db.Gorm.Where("number = ?", blockModel.Number).Last(&response).Error
+		if err != nil {
+			return nil, err
 		}
-		protomsg := &stargazerproto.ReadBlockResponse{
-			Block: block,
-		}
-		data, err := proto.Marshal(protomsg)
+		block := response.ToGrpcBlockModel()
+		data, err := proto.Marshal(block)
+
 		return data, err
 	})
+
 	if err != nil {
-		panic(err)
-	}
-	byteData, err := utils.GetBytes(data)
-	if err != nil {
-		panic(err)
+		fmt.Printf("Unable to GET data")
+		return nil
 	}
 	block := &stargazerproto.Block{}
-	err = proto.Unmarshal(byteData, block)
+	err = proto.Unmarshal(data, block)
 	if err != nil {
-		panic(err)
+		fmt.Print("Unable to unmarshal data", err)
+		return nil
+
 	}
 	return &stargazerproto.ReadBlockResponse{
 		Block: block,

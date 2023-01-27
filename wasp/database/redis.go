@@ -37,30 +37,23 @@ func newRedisClient() (RedisClient, error) {
 	return redis, nil
 }
 
-func (r *RedisClient) Get(key string) (interface{}, error) {
+func (r *RedisClient) Get(key string) ([]byte, error) {
 	ctx := context.Background()
 	val, err := r.get(ctx, key)
-	if err != nil {
-		panic(err)
-	}
-
-	if val == "" {
-		return nil, nil
-	}
-	return nil, nil
+	return val, err
 }
 
-func (r *RedisClient) Set(key string, value interface{}) error {
+func (r *RedisClient) Set(key string, value []byte) error {
 	ctx := context.Background()
-	return r.client.Set(ctx, key, value, 5*time.Minute).Err()
+	return r.client.Set(ctx, key, value, time.Hour).Err()
 }
 
 func (r *RedisClient) Delete(key string) error {
 	return nil
 }
 
-func (r *RedisClient) get(ctx context.Context, key string) (interface{}, error) {
-	val, err := r.client.Get(ctx, key).Result()
+func (r *RedisClient) get(ctx context.Context, key string) ([]byte, error) {
+	val, err := r.client.Get(ctx, key).Bytes()
 	switch {
 	case err == redis.Nil:
 		// key does not exist
@@ -68,7 +61,7 @@ func (r *RedisClient) get(ctx context.Context, key string) (interface{}, error) 
 	case err != nil:
 		// Get failed
 		return nil, err
-	case val == "":
+	case len(val) == 0:
 		// value is empty
 		return nil, nil
 	}

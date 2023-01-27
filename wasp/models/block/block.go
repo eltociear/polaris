@@ -32,7 +32,7 @@ func (m *BlockModel) GetId() int64 {
 }
 
 func (m *BlockModel) GetTable() string {
-	return "blocks"
+	return "block_models"
 }
 
 func (m *BlockModel) GetRedisDb() int64 {
