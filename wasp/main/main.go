@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/big"
 	"os"
 
 	"github.com/berachain/stargazer/wasp/database"
-	"github.com/berachain/stargazer/wasp/proto"
 	"github.com/berachain/stargazer/wasp/repository"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -36,6 +36,8 @@ func syncr(repos *repository.Repositories) {
 	}
 	headers := make(chan *types.Header)
 	sub, err := client.SubscribeNewHead(ctx, headers)
+	chainID, err := client.NetworkID(context.Background())
+	signerType := types.NewEIP155Signer(chainID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,19 +47,13 @@ func syncr(repos *repository.Repositories) {
 		case err := <-sub.Err():
 			log.Fatal(err)
 		case header := <-headers:
-			block, err := client.BlockByHash(context.Background(), header.Hash())
+			block, err := client.BlockByNumber(context.Background(), big.NewInt(0).Sub(header.Number, big.NewInt(1)))
 			if err != nil {
 				log.Fatal(err)
 			}
-			msg := &proto.CreateBlockRequest{
-				Block: &proto.Block{
-					Number: block.Number().Int64(),
-				},
-			}
-			res := repos.BlockRepo.CreateBlock(ctx, msg)
-			fmt.Println(block.Number().Int64()) // 3477413
-			fmt.Println(res.Code)               // 3477413
-
+			code := repos.BlockRepo.CreateBlock(ctx, block, signerType)
+			fmt.Println(code)
 		}
+
 	}
 }

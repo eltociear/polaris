@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	models "github.com/berachain/stargazer/wasp/models/block"
+	"github.com/berachain/stargazer/wasp/models"
 	"gorm.io/driver/postgres"
+	"gorm.io/gen"
 	"gorm.io/gorm"
 )
 
@@ -24,12 +25,12 @@ func NewDatabase() (*Database, error) {
 
 	return &Database{
 		ctx:         context.Background(),
-		Gorm:        openGorm(),
+		Gorm:        OpenGorm(),
 		RedisClient: redisClient,
 	}, nil
 }
 
-func openGorm() *gorm.DB {
+func OpenGorm() *gorm.DB {
 	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		os.Getenv("POSTGRES_USER"),
 		os.Getenv("POSTGRES_PASSWORD"),
@@ -38,13 +39,30 @@ func openGorm() *gorm.DB {
 		os.Getenv("POSTGRES_DB"),
 	)
 
-	dbClient, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
+	dbClient, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true})
+	g := gen.NewGenerator(gen.Config{
+		OutPath:       "./wasp/query", // output directory, default value is ./query
+		Mode:          gen.WithDefaultQuery | gen.WithQueryInterface,
+		FieldNullable: true,
+	})
 
+	// Initialize a *gorm.DB instance
+
+	// Use the above `*gorm.DB` instance to initialize the generator,
+	// which is required to generate structs from db when using `GenerateModel/GenerateModelAs`
+	g.UseDB(dbClient)
+
+	// Generate default DAO interface for those specified structs
+	g.ApplyBasic(models.EthBlockModel{}, models.TransactionModel{})
+
+	// Execute the generator
+	g.Execute()
+
+	dbClient.AutoMigrate(&models.EthBlockModel{}, &models.TransactionModel{})
+	dbClient.Model(&models.EthBlockModel{})
 	if err != nil {
 		panic(err)
 	}
-
-	dbClient.AutoMigrate(&models.BlockModel{})
 
 	return dbClient
 }
