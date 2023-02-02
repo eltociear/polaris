@@ -8,11 +8,12 @@ replace github.com/cosmos/cosmos-sdk => github.com/berachain/cosmos-sdk v0.47.0-
 require (
 	cosmossdk.io/errors v1.0.0-beta.7
 	github.com/bufbuild/buf v1.7.0
+	github.com/cosmos/cosmos-sdk v0.0.0-00010101000000-000000000000
 	github.com/cosmos/gogoproto v1.4.3
 	github.com/cosmos/gosec/v2 v2.0.0-20221105100203-f3d05e8e9019
 	github.com/dave/jennifer v1.6.0
 	github.com/ethereum/go-ethereum v1.10.26
-	github.com/golangci/golangci-lint v1.42.1
+	github.com/golangci/golangci-lint v1.49.0
 	github.com/google/addlicense v1.1.0
 	github.com/holiman/uint256 v1.2.0
 	github.com/incu6us/goimports-reviser/v3 v3.3.0
@@ -22,14 +23,14 @@ require (
 	github.com/segmentio/golines v0.11.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
-	github.com/tendermint/tendermint v0.35.0-rc1
+	github.com/tendermint/tendermint v0.37.0-rc2
 	github.com/tendermint/tm-db v0.6.7
 	github.com/tidwall/btree v1.5.2
 	golang.org/x/tools v0.4.0
 	golang.org/x/tools/gopls v0.11.0
-	google.golang.org/grpc v1.51.0
 	gorm.io/driver/postgres v1.4.6
 	gorm.io/gorm v1.24.3
+	gorm.io/plugin/dbresolver v1.3.0
 )
 
 require (
@@ -49,11 +50,11 @@ require (
 	github.com/timonwong/logrlint v0.1.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
 	github.com/tklauser/numcpus v0.4.0 // indirect
+	google.golang.org/grpc v1.51.0 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gorm.io/datatypes v1.0.7 // indirect
 	gorm.io/driver/mysql v1.4.0 // indirect
 	gorm.io/hints v1.1.0 // indirect
-	gorm.io/plugin/dbresolver v1.3.0 // indirect
 )
 
 require (
@@ -105,11 +106,11 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogogateway v1.2.0 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
-	github.com/cosmos/iavl v0.17.3 // indirect
+	github.com/cosmos/iavl v0.19.4 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/curioswitch/go-reassign v0.2.0 // indirect
-	github.com/daixiang0/gci v0.2.9 // indirect
+	github.com/daixiang0/gci v0.6.3 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/dave/dst v0.27.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -325,7 +326,7 @@ require (
 	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/vuln v0.0.0-20221109205719-3af8368ee4fe // indirect
 	google.golang.org/genproto v0.0.0-20221118155620-16455021b5e6 // indirect
-	google.golang.org/protobuf v1.28.1
+	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

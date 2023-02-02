@@ -18,12 +18,16 @@ import (
 var (
 	Q                = new(Query)
 	EthBlockModel    *ethBlockModel
+	EthLog           *ethLog
+	EthTxnReceipt    *ethTxnReceipt
 	TransactionModel *transactionModel
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
 	EthBlockModel = &Q.EthBlockModel
+	EthLog = &Q.EthLog
+	EthTxnReceipt = &Q.EthTxnReceipt
 	TransactionModel = &Q.TransactionModel
 }
 
@@ -31,6 +35,8 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:               db,
 		EthBlockModel:    newEthBlockModel(db, opts...),
+		EthLog:           newEthLog(db, opts...),
+		EthTxnReceipt:    newEthTxnReceipt(db, opts...),
 		TransactionModel: newTransactionModel(db, opts...),
 	}
 }
@@ -39,6 +45,8 @@ type Query struct {
 	db *gorm.DB
 
 	EthBlockModel    ethBlockModel
+	EthLog           ethLog
+	EthTxnReceipt    ethTxnReceipt
 	TransactionModel transactionModel
 }
 
@@ -48,6 +56,8 @@ func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:               db,
 		EthBlockModel:    q.EthBlockModel.clone(db),
+		EthLog:           q.EthLog.clone(db),
+		EthTxnReceipt:    q.EthTxnReceipt.clone(db),
 		TransactionModel: q.TransactionModel.clone(db),
 	}
 }
@@ -64,18 +74,24 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:               db,
 		EthBlockModel:    q.EthBlockModel.replaceDB(db),
+		EthLog:           q.EthLog.replaceDB(db),
+		EthTxnReceipt:    q.EthTxnReceipt.replaceDB(db),
 		TransactionModel: q.TransactionModel.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
 	EthBlockModel    IEthBlockModelDo
+	EthLog           IEthLogDo
+	EthTxnReceipt    IEthTxnReceiptDo
 	TransactionModel ITransactionModelDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		EthBlockModel:    q.EthBlockModel.WithContext(ctx),
+		EthLog:           q.EthLog.WithContext(ctx),
+		EthTxnReceipt:    q.EthTxnReceipt.WithContext(ctx),
 		TransactionModel: q.TransactionModel.WithContext(ctx),
 	}
 }

@@ -29,7 +29,7 @@ func newTransactionModel(db *gorm.DB, opts ...gen.DOOption) transactionModel {
 	_transactionModel.ALL = field.NewAsterisk(tableName)
 	_transactionModel.ID = field.NewInt64(tableName, "id")
 	_transactionModel.Number = field.NewString(tableName, "number")
-	_transactionModel.Hash = field.NewBytes(tableName, "hash")
+	_transactionModel.Hash = field.NewBytes(tableName, "tx_hash")
 	_transactionModel.Size = field.NewString(tableName, "size")
 	_transactionModel.Time = field.NewUint64(tableName, "time")
 	_transactionModel.From = field.NewBytes(tableName, "from")
@@ -43,6 +43,16 @@ func newTransactionModel(db *gorm.DB, opts ...gen.DOOption) transactionModel {
 	_transactionModel.Value = field.NewString(tableName, "value")
 	_transactionModel.Nonce = field.NewUint64(tableName, "nonce")
 	_transactionModel.To = field.NewBytes(tableName, "to")
+	_transactionModel.Receipt = transactionModelHasOneReceipt{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Receipt", "models.EthTxnReceipt"),
+		Logs: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Receipt.Logs", "models.EthLog"),
+		},
+	}
 
 	_transactionModel.fillFieldMap()
 
@@ -69,6 +79,7 @@ type transactionModel struct {
 	Value     field.String
 	Nonce     field.Uint64
 	To        field.Bytes
+	Receipt   transactionModelHasOneReceipt
 
 	fieldMap map[string]field.Expr
 }
@@ -87,7 +98,7 @@ func (t *transactionModel) updateTableName(table string) *transactionModel {
 	t.ALL = field.NewAsterisk(table)
 	t.ID = field.NewInt64(table, "id")
 	t.Number = field.NewString(table, "number")
-	t.Hash = field.NewBytes(table, "hash")
+	t.Hash = field.NewBytes(table, "tx_hash")
 	t.Size = field.NewString(table, "size")
 	t.Time = field.NewUint64(table, "time")
 	t.From = field.NewBytes(table, "from")
@@ -125,10 +136,10 @@ func (t *transactionModel) GetFieldByName(fieldName string) (field.OrderExpr, bo
 }
 
 func (t *transactionModel) fillFieldMap() {
-	t.fieldMap = make(map[string]field.Expr, 16)
+	t.fieldMap = make(map[string]field.Expr, 17)
 	t.fieldMap["id"] = t.ID
 	t.fieldMap["number"] = t.Number
-	t.fieldMap["hash"] = t.Hash
+	t.fieldMap["tx_hash"] = t.Hash
 	t.fieldMap["size"] = t.Size
 	t.fieldMap["time"] = t.Time
 	t.fieldMap["from"] = t.From
@@ -142,6 +153,7 @@ func (t *transactionModel) fillFieldMap() {
 	t.fieldMap["value"] = t.Value
 	t.fieldMap["nonce"] = t.Nonce
 	t.fieldMap["to"] = t.To
+
 }
 
 func (t transactionModel) clone(db *gorm.DB) transactionModel {
@@ -152,6 +164,76 @@ func (t transactionModel) clone(db *gorm.DB) transactionModel {
 func (t transactionModel) replaceDB(db *gorm.DB) transactionModel {
 	t.transactionModelDo.ReplaceDB(db)
 	return t
+}
+
+type transactionModelHasOneReceipt struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	Logs struct {
+		field.RelationField
+	}
+}
+
+func (a transactionModelHasOneReceipt) Where(conds ...field.Expr) *transactionModelHasOneReceipt {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a transactionModelHasOneReceipt) WithContext(ctx context.Context) *transactionModelHasOneReceipt {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a transactionModelHasOneReceipt) Model(m *models.TransactionModel) *transactionModelHasOneReceiptTx {
+	return &transactionModelHasOneReceiptTx{a.db.Model(m).Association(a.Name())}
+}
+
+type transactionModelHasOneReceiptTx struct{ tx *gorm.Association }
+
+func (a transactionModelHasOneReceiptTx) Find() (result *models.EthTxnReceipt, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a transactionModelHasOneReceiptTx) Append(values ...*models.EthTxnReceipt) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a transactionModelHasOneReceiptTx) Replace(values ...*models.EthTxnReceipt) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a transactionModelHasOneReceiptTx) Delete(values ...*models.EthTxnReceipt) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a transactionModelHasOneReceiptTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a transactionModelHasOneReceiptTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type transactionModelDo struct{ gen.DO }

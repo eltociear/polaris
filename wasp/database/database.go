@@ -53,13 +53,12 @@ func OpenGorm() *gorm.DB {
 	g.UseDB(dbClient)
 
 	// Generate default DAO interface for those specified structs
-	g.ApplyBasic(models.EthBlockModel{}, models.TransactionModel{})
+	g.ApplyBasic(models.EthBlockModel{}, models.TransactionModel{}, &models.EthTxnReceipt{}, &models.EthLog{})
 
 	// Execute the generator
 	g.Execute()
 
-	dbClient.AutoMigrate(&models.EthBlockModel{}, &models.TransactionModel{})
-	dbClient.Model(&models.EthBlockModel{})
+	dbClient.AutoMigrate(&models.EthBlockModel{}, &models.TransactionModel{}, &models.EthTxnReceipt{}, &models.EthLog{})
 	if err != nil {
 		panic(err)
 	}

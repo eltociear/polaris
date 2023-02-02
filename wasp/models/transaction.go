@@ -13,24 +13,31 @@ var _ wasp.BaseModel = (*TransactionModel)(nil)
 
 type TransactionModel struct {
 	wasp.BasePersistenceModal `gorm:"type:int;auto_increment;not null;"`
-	Number                    string `gorm:"type:varchar(64);not null;column:number;"`
-	Hash                      []byte `gorm:"type:bytea;not null;"`
-	Size                      string `gorm:"type:varchar(64);not null"`
-	Time                      uint64 `gorm:"type:int;not null;"`
-	From                      []byte `gorm:"type:bytea;not null;"`
-	Type                      uint8  `gorm:"type:smallint;not null;"`
-	ChainID                   uint64 `gorm:"type:int;not null;"`
-	Data                      []byte `gorm:"type:bytea;not null;"`
-	Gas                       uint64 `gorm:"type:int;not null;"`
-	GasPrice                  string `gorm:"type:varchar(64);not null;"`
-	GasTipCap                 string `gorm:"type:varchar(64);not null;"`
-	GasFeeCap                 string `gorm:"type:varchar(64);not null;"`
-	Value                     string `gorm:"type:varchar(64);not null;"`
-	Nonce                     uint64 `gorm:"type:int;not null;"`
-	To                        []byte `gorm:"type:bytea;"`
+	Number                    string        `gorm:"type:varchar(64);not null;column:number;"`
+	Hash                      []byte        `gorm:"type:bytea;not null;column:tx_hash"`
+	Size                      string        `gorm:"type:varchar(64);not null"`
+	Time                      uint64        `gorm:"type:int;not null;"`
+	From                      []byte        `gorm:"type:bytea;not null;"`
+	Type                      uint8         `gorm:"type:int;not null;"`
+	ChainID                   uint64        `gorm:"type:int;not null;"`
+	Data                      []byte        `gorm:"type:bytea;not null;"`
+	Gas                       uint64        `gorm:"type:int;not null;"`
+	GasPrice                  string        `gorm:"type:varchar(64);not null;"`
+	GasTipCap                 string        `gorm:"type:varchar(64);not null;"`
+	GasFeeCap                 string        `gorm:"type:varchar(64);not null;"`
+	Value                     string        `gorm:"type:varchar(64);not null;"`
+	Nonce                     uint64        `gorm:"type:int;not null;"`
+	To                        []byte        `gorm:"type:bytea;"`
+	Receipt                   EthTxnReceipt `gorm:"foreignkey:tx_hash;references:tx_hash" json:"receipt"`
 }
 
-func GethToTransactionModel(txn *types.Transaction, blockNumber string, time uint64, baseFee *big.Int, signer types.Signer) *TransactionModel {
+func GethToTransactionModel(
+	txn *types.Transaction,
+	blockNumber string,
+	time uint64,
+	baseFee *big.Int,
+	signer types.Signer,
+	receipt EthTxnReceipt) *TransactionModel {
 
 	txnMsg, _ := txn.AsMessage(signer, baseFee)
 
@@ -52,6 +59,7 @@ func GethToTransactionModel(txn *types.Transaction, blockNumber string, time uin
 			Value:     txn.Value().String(),
 			Nonce:     txn.Nonce(),
 			To:        nil,
+			Receipt:   receipt,
 		}
 	}
 	return &TransactionModel{
@@ -69,6 +77,7 @@ func GethToTransactionModel(txn *types.Transaction, blockNumber string, time uin
 		Value:     txn.Value().String(),
 		Nonce:     txn.Nonce(),
 		To:        txn.To().Bytes(),
+		Receipt:   receipt,
 	}
 }
 func (m *TransactionModel) GetId() int64 {

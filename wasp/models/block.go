@@ -35,17 +35,7 @@ type EthBlockModel struct {
 	ReceivedAt                time.Time          `gorm:"type:timestamp;not null;" json:"receivedAt"`
 }
 
-func GethToBlockModel(gethBlock *types.Block, signerType *types.Signer) *EthBlockModel {
-	txns := []TransactionModel{}
-
-	for i := 0; i < gethBlock.Transactions().Len(); i++ {
-		txn := *GethToTransactionModel(gethBlock.Transactions()[i],
-			gethBlock.Number().String(),
-			gethBlock.Time(),
-			gethBlock.BaseFee(),
-			*signerType)
-		txns = append(txns, txn)
-	}
+func GethToBlockModel(gethBlock *types.Block, txns []TransactionModel) *EthBlockModel {
 
 	return &EthBlockModel{
 		ParentHash:  gethBlock.ParentHash().Bytes(),

@@ -6,34 +6,36 @@ import (
 
 	"github.com/berachain/stargazer/wasp/database"
 	"github.com/berachain/stargazer/wasp/models"
+	"github.com/berachain/stargazer/wasp/queryClient"
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
 type BlockRepo struct {
 	db *database.Database
+	qc *queryClient.QueryClient
 }
 
-func NewBlockRepo(db *database.Database) *BlockRepo {
+func NewBlockRepo(db *database.Database, qc *queryClient.QueryClient) *BlockRepo {
 	return &BlockRepo{
 		db: db,
+		qc: qc,
 	}
 }
 
-func (repo *BlockRepo) CreateBlock(ctx context.Context, msg *types.Block, signerType types.Signer) int {
-	blockModel := models.GethToBlockModel(msg, &signerType)
-	data, err := json.Marshal(blockModel)
+func (repo *BlockRepo) CreateBlock(ctx context.Context, block *models.EthBlockModel) int {
+	data, err := json.Marshal(block)
 	if err != nil {
 		panic(err)
 	}
 
 	req := &database.SetRequest{
-		RedisDb: blockModel.GetRedisDb(),
-		Key:     blockModel.GetRedisKey(),
+		RedisDb: block.GetRedisDb(),
+		Key:     block.GetRedisKey(),
 		Value:   data,
 	}
 
 	err = repo.db.Set(req, func() error {
-		res := repo.db.Gorm.Create(&blockModel)
+		res := repo.db.Gorm.Create(&block)
 		return res.Error
 	})
 
@@ -42,6 +44,11 @@ func (repo *BlockRepo) CreateBlock(ctx context.Context, msg *types.Block, signer
 	}
 
 	return 0
+}
+
+func (repo *BlockRepo) BuildBlock(block *types.Block, txns []models.TransactionModel) *models.EthBlockModel {
+	blockModel := models.GethToBlockModel(block, txns)
+	return blockModel
 }
 
 // func (repo *BlockRepo) GetBlock(ctx context.Context, msg *stargazerproto.ReadBlockRequest) *stargazerproto.ReadBlockResponse {

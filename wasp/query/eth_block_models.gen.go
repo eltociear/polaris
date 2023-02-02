@@ -51,6 +51,19 @@ func newEthBlockModel(db *gorm.DB, opts ...gen.DOOption) ethBlockModel {
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("Txs", "models.TransactionModel"),
+		Receipt: struct {
+			field.RelationField
+			Logs struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("Txs.Receipt", "models.EthTxnReceipt"),
+			Logs: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Txs.Receipt.Logs", "models.EthLog"),
+			},
+		},
 	}
 
 	_ethBlockModel.fillFieldMap()
@@ -181,6 +194,13 @@ type ethBlockModelHasManyTxs struct {
 	db *gorm.DB
 
 	field.RelationField
+
+	Receipt struct {
+		field.RelationField
+		Logs struct {
+			field.RelationField
+		}
+	}
 }
 
 func (a ethBlockModelHasManyTxs) Where(conds ...field.Expr) *ethBlockModelHasManyTxs {
