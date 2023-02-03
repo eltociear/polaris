@@ -38,11 +38,25 @@ var (
 	gitDiff = sh.RunCmd("git", "diff", "--stat", "--exit-code", ".",
 		"':(exclude)*.mod' ':(exclude)*.sum'")
 
+	// Dependencies.
+	moq = "github.com/matryer/moq"
+
 	// Variables and Helpers.
 	cmds       = []string{""}
 	production = false
 	statically = false
 )
+
+// Runs a series of commonly used commands.
+func All() error {
+	cmds := []func() error{ForgeBuild, Generate, Format, Proto, Lint, Test}
+	for _, cmd := range cmds {
+		if err := cmd(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 // Runs `go build` on the entire project.
 func Build() error {
@@ -110,6 +124,9 @@ func Install() error {
 
 // Runs `go generate` on the entire project.
 func Generate() error {
+	if err := goInstall(moq); err != nil {
+		return err
+	}
 	return goGenerate("-x", "./...")
 }
 

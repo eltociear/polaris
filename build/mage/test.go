@@ -23,8 +23,9 @@ var (
 
 	// Arguments.
 	junitArgs = []string{"--junit-report", "out.xml"}
-	coverArgs = append(junitArgs, []string{"--cover", "--coverprofile", "coverage.txt", "--covermode", "atomic"}...)
-	raceArgs  = append(junitArgs, []string{"-race"}...)
+	coverArgs = append(junitArgs, []string{"--cover", "--coverprofile",
+		"coverage-testunitcover.txt", "--covermode", "atomic"}...)
+	raceArgs = append(junitArgs, []string{"-race"}...)
 
 	// Commands.
 	goTest     = mi.RunCmdV("go", "test", "-mod=readonly")
