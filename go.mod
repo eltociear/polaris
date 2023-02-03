@@ -8,12 +8,11 @@ replace github.com/cosmos/cosmos-sdk => github.com/berachain/cosmos-sdk v0.47.0-
 require (
 	cosmossdk.io/errors v1.0.0-beta.7
 	github.com/bufbuild/buf v1.7.0
-	github.com/cosmos/cosmos-sdk v0.0.0-00010101000000-000000000000
 	github.com/cosmos/gogoproto v1.4.3
 	github.com/cosmos/gosec/v2 v2.0.0-20221105100203-f3d05e8e9019
 	github.com/dave/jennifer v1.6.0
 	github.com/ethereum/go-ethereum v1.10.26
-	github.com/golangci/golangci-lint v1.49.0
+	github.com/golangci/golangci-lint v1.42.1
 	github.com/google/addlicense v1.1.0
 	github.com/holiman/uint256 v1.2.0
 	github.com/incu6us/goimports-reviser/v3 v3.3.0
@@ -23,7 +22,7 @@ require (
 	github.com/segmentio/golines v0.11.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
-	github.com/tendermint/tendermint v0.37.0-rc2
+	github.com/tendermint/tendermint v0.35.0-rc1
 	github.com/tendermint/tm-db v0.6.7
 	github.com/tidwall/btree v1.5.2
 	golang.org/x/tools v0.4.0
@@ -40,11 +39,14 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.2.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/mingjingc/abi-decoder v0.0.0-20220815110539-df88f6d95977 // indirect
+	github.com/rjeczalik/notify v0.9.1 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
 	github.com/sylvia7788/contextcheck v1.0.6 // indirect
 	github.com/timonwong/logrlint v0.1.0 // indirect
@@ -106,11 +108,11 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogogateway v1.2.0 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
-	github.com/cosmos/iavl v0.19.4 // indirect
+	github.com/cosmos/iavl v0.17.3 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/curioswitch/go-reassign v0.2.0 // indirect
-	github.com/daixiang0/gci v0.6.3 // indirect
+	github.com/daixiang0/gci v0.2.9 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/dave/dst v0.27.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect

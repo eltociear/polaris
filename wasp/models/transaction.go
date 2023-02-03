@@ -40,15 +40,13 @@ func GethToTransactionModel(
 	receipt EthTxnReceipt) *TransactionModel {
 
 	txnMsg, _ := txn.AsMessage(signer, baseFee)
-
+	from, _ := signer.Sender(txn)
 	if txn.To() == nil {
-		fmt.Println(txn.Hash().Hex())
-		fmt.Println("CONTRACT CREATION")
 		return &TransactionModel{
 			Hash:      txn.Hash().Bytes(),
 			Size:      txn.Size().String(),
 			Time:      time,
-			From:      txnMsg.From().Bytes(),
+			From:      from.Bytes(),
 			Type:      txn.Type(),
 			ChainID:   txn.ChainId().Uint64(),
 			Data:      txn.Data(),

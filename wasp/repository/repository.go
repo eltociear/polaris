@@ -8,11 +8,15 @@ import (
 type Repositories struct {
 	BlockRepo       *BlockRepo
 	TransactionRepo *TransactionRepo
+	AccountRepo     *AccountRepo
+	ContractRepo    *ContractRepo
 }
 
 func InitRepositories(db *database.Database, qc *queryClient.QueryClient) *Repositories {
 	return &Repositories{
 		BlockRepo:       NewBlockRepo(db, qc),
 		TransactionRepo: NewTransactionRepo(db, qc),
+		AccountRepo:     NewAccountRepo(db, qc),
+		ContractRepo:    NewContractRepo(db, qc),
 	}
 }

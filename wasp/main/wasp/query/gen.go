@@ -17,20 +17,44 @@ import (
 
 var (
 	Q                = new(Query)
+	Abi              *abi
+	Contract         *contract
+	Erc20Balance     *erc20Balance
+	Erc721Balance    *erc721Balance
+	Erc721Tokens     *erc721Tokens
+	EthAccount       *ethAccount
 	EthBlockModel    *ethBlockModel
+	EthLog           *ethLog
+	EthTxnReceipt    *ethTxnReceipt
 	TransactionModel *transactionModel
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	Abi = &Q.Abi
+	Contract = &Q.Contract
+	Erc20Balance = &Q.Erc20Balance
+	Erc721Balance = &Q.Erc721Balance
+	Erc721Tokens = &Q.Erc721Tokens
+	EthAccount = &Q.EthAccount
 	EthBlockModel = &Q.EthBlockModel
+	EthLog = &Q.EthLog
+	EthTxnReceipt = &Q.EthTxnReceipt
 	TransactionModel = &Q.TransactionModel
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:               db,
+		Abi:              newAbi(db, opts...),
+		Contract:         newContract(db, opts...),
+		Erc20Balance:     newErc20Balance(db, opts...),
+		Erc721Balance:    newErc721Balance(db, opts...),
+		Erc721Tokens:     newErc721Tokens(db, opts...),
+		EthAccount:       newEthAccount(db, opts...),
 		EthBlockModel:    newEthBlockModel(db, opts...),
+		EthLog:           newEthLog(db, opts...),
+		EthTxnReceipt:    newEthTxnReceipt(db, opts...),
 		TransactionModel: newTransactionModel(db, opts...),
 	}
 }
@@ -38,7 +62,15 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 type Query struct {
 	db *gorm.DB
 
+	Abi              abi
+	Contract         contract
+	Erc20Balance     erc20Balance
+	Erc721Balance    erc721Balance
+	Erc721Tokens     erc721Tokens
+	EthAccount       ethAccount
 	EthBlockModel    ethBlockModel
+	EthLog           ethLog
+	EthTxnReceipt    ethTxnReceipt
 	TransactionModel transactionModel
 }
 
@@ -47,7 +79,15 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:               db,
+		Abi:              q.Abi.clone(db),
+		Contract:         q.Contract.clone(db),
+		Erc20Balance:     q.Erc20Balance.clone(db),
+		Erc721Balance:    q.Erc721Balance.clone(db),
+		Erc721Tokens:     q.Erc721Tokens.clone(db),
+		EthAccount:       q.EthAccount.clone(db),
 		EthBlockModel:    q.EthBlockModel.clone(db),
+		EthLog:           q.EthLog.clone(db),
+		EthTxnReceipt:    q.EthTxnReceipt.clone(db),
 		TransactionModel: q.TransactionModel.clone(db),
 	}
 }
@@ -63,19 +103,43 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:               db,
+		Abi:              q.Abi.replaceDB(db),
+		Contract:         q.Contract.replaceDB(db),
+		Erc20Balance:     q.Erc20Balance.replaceDB(db),
+		Erc721Balance:    q.Erc721Balance.replaceDB(db),
+		Erc721Tokens:     q.Erc721Tokens.replaceDB(db),
+		EthAccount:       q.EthAccount.replaceDB(db),
 		EthBlockModel:    q.EthBlockModel.replaceDB(db),
+		EthLog:           q.EthLog.replaceDB(db),
+		EthTxnReceipt:    q.EthTxnReceipt.replaceDB(db),
 		TransactionModel: q.TransactionModel.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
+	Abi              IAbiDo
+	Contract         IContractDo
+	Erc20Balance     IErc20BalanceDo
+	Erc721Balance    IErc721BalanceDo
+	Erc721Tokens     IErc721TokensDo
+	EthAccount       IEthAccountDo
 	EthBlockModel    IEthBlockModelDo
+	EthLog           IEthLogDo
+	EthTxnReceipt    IEthTxnReceiptDo
 	TransactionModel ITransactionModelDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
+		Abi:              q.Abi.WithContext(ctx),
+		Contract:         q.Contract.WithContext(ctx),
+		Erc20Balance:     q.Erc20Balance.WithContext(ctx),
+		Erc721Balance:    q.Erc721Balance.WithContext(ctx),
+		Erc721Tokens:     q.Erc721Tokens.WithContext(ctx),
+		EthAccount:       q.EthAccount.WithContext(ctx),
 		EthBlockModel:    q.EthBlockModel.WithContext(ctx),
+		EthLog:           q.EthLog.WithContext(ctx),
+		EthTxnReceipt:    q.EthTxnReceipt.WithContext(ctx),
 		TransactionModel: q.TransactionModel.WithContext(ctx),
 	}
 }

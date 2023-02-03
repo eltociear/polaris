@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/berachain/stargazer/wasp/abi"
 	"github.com/berachain/stargazer/wasp/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gen"
@@ -53,16 +54,38 @@ func OpenGorm() *gorm.DB {
 	g.UseDB(dbClient)
 
 	// Generate default DAO interface for those specified structs
-	g.ApplyBasic(models.EthBlockModel{}, models.TransactionModel{}, &models.EthTxnReceipt{}, &models.EthLog{})
+	g.ApplyBasic(
+		models.EthBlockModel{},
+		models.TransactionModel{},
+		models.EthTxnReceipt{},
+		models.EthLog{},
+		models.Abi{},
+		models.EthAccount{},
+		models.Contract{},
+		models.Erc20Balance{},
+		models.Erc721Balance{},
+		models.Erc721Tokens{})
 
 	// Execute the generator
 	g.Execute()
 
-	dbClient.AutoMigrate(&models.EthBlockModel{}, &models.TransactionModel{}, &models.EthTxnReceipt{}, &models.EthLog{})
+	dbClient.AutoMigrate(
+		&models.EthBlockModel{},
+		&models.TransactionModel{},
+		&models.EthTxnReceipt{},
+		&models.EthLog{},
+		&models.Abi{},
+		&models.EthAccount{},
+		&models.Contract{},
+		&models.Erc20Balance{},
+		&models.Erc721Balance{},
+		&models.Erc721Tokens{})
+
 	if err != nil {
 		panic(err)
 	}
 
+	abi.CreateDefaultAbi(dbClient)
 	return dbClient
 }
 

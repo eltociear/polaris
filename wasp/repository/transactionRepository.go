@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"encoding/hex"
+	"fmt"
 	"math/big"
 
 	"github.com/berachain/stargazer/wasp/database"
@@ -29,8 +31,7 @@ func (r *TransactionRepo) BuildTransactionList(block *types.Block) *[]models.Tra
 	if err != nil {
 		panic("unable to retrieve chainId")
 	}
-	signerType := types.NewEIP155Signer(chainID)
-
+	signerType := types.LatestSignerForChainID(chainID)
 	for _, t := range block.Transactions() {
 		txn := *r.BuildTransaction(
 			t,
@@ -57,6 +58,18 @@ func (r *TransactionRepo) BuildTransaction(
 		baseFee,
 		signerType,
 		receipt)
+
+	if txnModel.To == nil {
+		//contract creation
+		fmt.Println("CONTRACT CREATION")
+		fmt.Println(hex.EncodeToString(txnModel.Hash))
+
+		c := BuildContract(txnModel)
+		fmt.Println(c)
+		return txnModel
+	} else {
+		//detect transfer events
+	}
 
 	return txnModel
 }
