@@ -9,7 +9,6 @@ type Repositories struct {
 	BlockRepo       *BlockRepo
 	TransactionRepo *TransactionRepo
 	AccountRepo     *AccountRepo
-	ContractRepo    *ContractRepo
 }
 
 func InitRepositories(db *database.Database, qc *queryClient.QueryClient) *Repositories {
@@ -17,6 +16,5 @@ func InitRepositories(db *database.Database, qc *queryClient.QueryClient) *Repos
 		BlockRepo:       NewBlockRepo(db, qc),
 		TransactionRepo: NewTransactionRepo(db, qc),
 		AccountRepo:     NewAccountRepo(db, qc),
-		ContractRepo:    NewContractRepo(db, qc),
 	}
 }

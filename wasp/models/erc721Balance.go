@@ -12,7 +12,7 @@ type Erc721Balance struct {
 	wasp.BasePersistenceModal `gorm:"type:int;auto_increment;not null;"`
 	Address                   []byte         `gorm:"type:bytea;not null;column:owner" json:"owner"`
 	ContractAddress           []byte         `gorm:"type:bytea;not null;column:contract_address" json:"contractAddress"`
-	Id                        []Erc721Tokens `gorm:"foreignkey:balance_id;references:id" json:"tokenIds"`
+	TokenIds                  []Erc721Tokens `gorm:"foreignkey:balance_id;references:id" json:"tokenIds"`
 }
 
 func (m *Erc721Balance) GetId() int64 {

@@ -30,7 +30,6 @@ func newErc721Tokens(db *gorm.DB, opts ...gen.DOOption) erc721Tokens {
 	_erc721Tokens.ID = field.NewInt64(tableName, "id")
 	_erc721Tokens.BalanceId = field.NewInt64(tableName, "balance_id")
 	_erc721Tokens.TokenId = field.NewInt64(tableName, "token_id")
-	_erc721Tokens.Data = field.NewBytes(tableName, "data")
 
 	_erc721Tokens.fillFieldMap()
 
@@ -44,7 +43,6 @@ type erc721Tokens struct {
 	ID        field.Int64
 	BalanceId field.Int64
 	TokenId   field.Int64
-	Data      field.Bytes
 
 	fieldMap map[string]field.Expr
 }
@@ -64,7 +62,6 @@ func (e *erc721Tokens) updateTableName(table string) *erc721Tokens {
 	e.ID = field.NewInt64(table, "id")
 	e.BalanceId = field.NewInt64(table, "balance_id")
 	e.TokenId = field.NewInt64(table, "token_id")
-	e.Data = field.NewBytes(table, "data")
 
 	e.fillFieldMap()
 
@@ -89,11 +86,10 @@ func (e *erc721Tokens) GetFieldByName(fieldName string) (field.OrderExpr, bool) 
 }
 
 func (e *erc721Tokens) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 4)
+	e.fieldMap = make(map[string]field.Expr, 3)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["balance_id"] = e.BalanceId
 	e.fieldMap["token_id"] = e.TokenId
-	e.fieldMap["data"] = e.Data
 }
 
 func (e erc721Tokens) clone(db *gorm.DB) erc721Tokens {

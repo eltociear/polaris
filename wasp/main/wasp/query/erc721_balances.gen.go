@@ -30,10 +30,10 @@ func newErc721Balance(db *gorm.DB, opts ...gen.DOOption) erc721Balance {
 	_erc721Balance.ID = field.NewInt64(tableName, "id")
 	_erc721Balance.Address = field.NewBytes(tableName, "owner")
 	_erc721Balance.ContractAddress = field.NewBytes(tableName, "contract_address")
-	_erc721Balance.Id = erc721BalanceHasManyId{
+	_erc721Balance.TokenIds = erc721BalanceHasManyTokenIds{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("Id", "models.Erc721Tokens"),
+		RelationField: field.NewRelation("TokenIds", "models.Erc721Tokens"),
 	}
 
 	_erc721Balance.fillFieldMap()
@@ -48,7 +48,7 @@ type erc721Balance struct {
 	ID              field.Int64
 	Address         field.Bytes
 	ContractAddress field.Bytes
-	Id              erc721BalanceHasManyId
+	TokenIds        erc721BalanceHasManyTokenIds
 
 	fieldMap map[string]field.Expr
 }
@@ -109,13 +109,13 @@ func (e erc721Balance) replaceDB(db *gorm.DB) erc721Balance {
 	return e
 }
 
-type erc721BalanceHasManyId struct {
+type erc721BalanceHasManyTokenIds struct {
 	db *gorm.DB
 
 	field.RelationField
 }
 
-func (a erc721BalanceHasManyId) Where(conds ...field.Expr) *erc721BalanceHasManyId {
+func (a erc721BalanceHasManyTokenIds) Where(conds ...field.Expr) *erc721BalanceHasManyTokenIds {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -128,22 +128,22 @@ func (a erc721BalanceHasManyId) Where(conds ...field.Expr) *erc721BalanceHasMany
 	return &a
 }
 
-func (a erc721BalanceHasManyId) WithContext(ctx context.Context) *erc721BalanceHasManyId {
+func (a erc721BalanceHasManyTokenIds) WithContext(ctx context.Context) *erc721BalanceHasManyTokenIds {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a erc721BalanceHasManyId) Model(m *models.Erc721Balance) *erc721BalanceHasManyIdTx {
-	return &erc721BalanceHasManyIdTx{a.db.Model(m).Association(a.Name())}
+func (a erc721BalanceHasManyTokenIds) Model(m *models.Erc721Balance) *erc721BalanceHasManyTokenIdsTx {
+	return &erc721BalanceHasManyTokenIdsTx{a.db.Model(m).Association(a.Name())}
 }
 
-type erc721BalanceHasManyIdTx struct{ tx *gorm.Association }
+type erc721BalanceHasManyTokenIdsTx struct{ tx *gorm.Association }
 
-func (a erc721BalanceHasManyIdTx) Find() (result []*models.Erc721Tokens, err error) {
+func (a erc721BalanceHasManyTokenIdsTx) Find() (result []*models.Erc721Tokens, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a erc721BalanceHasManyIdTx) Append(values ...*models.Erc721Tokens) (err error) {
+func (a erc721BalanceHasManyTokenIdsTx) Append(values ...*models.Erc721Tokens) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -151,7 +151,7 @@ func (a erc721BalanceHasManyIdTx) Append(values ...*models.Erc721Tokens) (err er
 	return a.tx.Append(targetValues...)
 }
 
-func (a erc721BalanceHasManyIdTx) Replace(values ...*models.Erc721Tokens) (err error) {
+func (a erc721BalanceHasManyTokenIdsTx) Replace(values ...*models.Erc721Tokens) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -159,7 +159,7 @@ func (a erc721BalanceHasManyIdTx) Replace(values ...*models.Erc721Tokens) (err e
 	return a.tx.Replace(targetValues...)
 }
 
-func (a erc721BalanceHasManyIdTx) Delete(values ...*models.Erc721Tokens) (err error) {
+func (a erc721BalanceHasManyTokenIdsTx) Delete(values ...*models.Erc721Tokens) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -167,11 +167,11 @@ func (a erc721BalanceHasManyIdTx) Delete(values ...*models.Erc721Tokens) (err er
 	return a.tx.Delete(targetValues...)
 }
 
-func (a erc721BalanceHasManyIdTx) Clear() error {
+func (a erc721BalanceHasManyTokenIdsTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a erc721BalanceHasManyIdTx) Count() int64 {
+func (a erc721BalanceHasManyTokenIdsTx) Count() int64 {
 	return a.tx.Count()
 }
 

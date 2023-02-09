@@ -31,6 +31,7 @@ func newEthAccount(db *gorm.DB, opts ...gen.DOOption) ethAccount {
 	_ethAccount.Address = field.NewBytes(tableName, "address")
 	_ethAccount.Alias_ = field.NewString(tableName, "alias")
 	_ethAccount.Balance = field.NewString(tableName, "balance")
+	_ethAccount.IsContract = field.NewBool(tableName, "is_contract")
 	_ethAccount.Contract = ethAccountHasOneContract{
 		db: db.Session(&gorm.Session{}),
 
@@ -46,10 +47,10 @@ func newEthAccount(db *gorm.DB, opts ...gen.DOOption) ethAccount {
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("Erc721Balance", "models.Erc721Balance"),
-		Id: struct {
+		TokenIds: struct {
 			field.RelationField
 		}{
-			RelationField: field.NewRelation("Erc721Balance.Id", "models.Erc721Tokens"),
+			RelationField: field.NewRelation("Erc721Balance.TokenIds", "models.Erc721Tokens"),
 		},
 	}
 
@@ -67,12 +68,13 @@ func newEthAccount(db *gorm.DB, opts ...gen.DOOption) ethAccount {
 type ethAccount struct {
 	ethAccountDo ethAccountDo
 
-	ALL      field.Asterisk
-	ID       field.Int64
-	Address  field.Bytes
-	Alias_   field.String
-	Balance  field.String
-	Contract ethAccountHasOneContract
+	ALL        field.Asterisk
+	ID         field.Int64
+	Address    field.Bytes
+	Alias_     field.String
+	Balance    field.String
+	IsContract field.Bool
+	Contract   ethAccountHasOneContract
 
 	Erc721Balance ethAccountHasManyErc721Balance
 
@@ -97,6 +99,7 @@ func (e *ethAccount) updateTableName(table string) *ethAccount {
 	e.Address = field.NewBytes(table, "address")
 	e.Alias_ = field.NewString(table, "alias")
 	e.Balance = field.NewString(table, "balance")
+	e.IsContract = field.NewBool(table, "is_contract")
 
 	e.fillFieldMap()
 
@@ -121,11 +124,12 @@ func (e *ethAccount) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *ethAccount) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 7)
+	e.fieldMap = make(map[string]field.Expr, 8)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["address"] = e.Address
 	e.fieldMap["alias"] = e.Alias_
 	e.fieldMap["balance"] = e.Balance
+	e.fieldMap["is_contract"] = e.IsContract
 
 }
 
@@ -214,7 +218,7 @@ type ethAccountHasManyErc721Balance struct {
 
 	field.RelationField
 
-	Id struct {
+	TokenIds struct {
 		field.RelationField
 	}
 }

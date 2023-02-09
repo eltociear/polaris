@@ -36,7 +36,9 @@ func (s *SyncrClient) Run() {
 			log.Fatal(err)
 		case header := <-headers:
 			// latest block - 1
+			fmt.Print(header)
 			block, err := s.client.BlockByNumber(context.Background(), big.NewInt(0).Sub(header.Number, big.NewInt(1)))
+			// block, err := s.client.BlockByNumber(context.Background(), big.NewInt(8452180))
 			if err != nil {
 				log.Fatal(err)
 			}

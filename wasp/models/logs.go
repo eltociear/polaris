@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/berachain/stargazer/core/types"
 	"github.com/berachain/stargazer/wasp"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 var _ wasp.BaseModel = (*EthLog)(nil)

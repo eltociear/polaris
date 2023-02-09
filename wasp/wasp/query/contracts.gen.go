@@ -31,7 +31,7 @@ func newContract(db *gorm.DB, opts ...gen.DOOption) contract {
 	_contract.Address = field.NewBytes(tableName, "contract_address")
 	_contract.Creator = field.NewBytes(tableName, "creator")
 	_contract.DeployTxnHash = field.NewBytes(tableName, "deploy_txn_hash")
-	_contract.AbiId = field.NewString(tableName, "abi_id")
+	_contract.AbiId = field.NewInt64(tableName, "abi_id")
 	_contract.Abi = contractHasOneAbi{
 		db: db.Session(&gorm.Session{}),
 
@@ -51,7 +51,7 @@ type contract struct {
 	Address       field.Bytes
 	Creator       field.Bytes
 	DeployTxnHash field.Bytes
-	AbiId         field.String
+	AbiId         field.Int64
 	Abi           contractHasOneAbi
 
 	fieldMap map[string]field.Expr
@@ -73,7 +73,7 @@ func (c *contract) updateTableName(table string) *contract {
 	c.Address = field.NewBytes(table, "contract_address")
 	c.Creator = field.NewBytes(table, "creator")
 	c.DeployTxnHash = field.NewBytes(table, "deploy_txn_hash")
-	c.AbiId = field.NewString(table, "abi_id")
+	c.AbiId = field.NewInt64(table, "abi_id")
 
 	c.fillFieldMap()
 

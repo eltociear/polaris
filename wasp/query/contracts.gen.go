@@ -31,7 +31,11 @@ func newContract(db *gorm.DB, opts ...gen.DOOption) contract {
 	_contract.Address = field.NewBytes(tableName, "contract_address")
 	_contract.Creator = field.NewBytes(tableName, "creator")
 	_contract.DeployTxnHash = field.NewBytes(tableName, "deploy_txn_hash")
-	_contract.AbiId = field.NewString(tableName, "abi_id")
+	_contract.AbiId = field.NewInt64(tableName, "abi_id")
+	_contract.Name = field.NewString(tableName, "name")
+	_contract.Symbol = field.NewString(tableName, "symbol")
+	_contract.Decimal = field.NewInt64(tableName, "decimals")
+	_contract.TotalSupply = field.NewString(tableName, "total_supply")
 	_contract.Abi = contractHasOneAbi{
 		db: db.Session(&gorm.Session{}),
 
@@ -51,7 +55,11 @@ type contract struct {
 	Address       field.Bytes
 	Creator       field.Bytes
 	DeployTxnHash field.Bytes
-	AbiId         field.String
+	AbiId         field.Int64
+	Name          field.String
+	Symbol        field.String
+	Decimal       field.Int64
+	TotalSupply   field.String
 	Abi           contractHasOneAbi
 
 	fieldMap map[string]field.Expr
@@ -73,7 +81,11 @@ func (c *contract) updateTableName(table string) *contract {
 	c.Address = field.NewBytes(table, "contract_address")
 	c.Creator = field.NewBytes(table, "creator")
 	c.DeployTxnHash = field.NewBytes(table, "deploy_txn_hash")
-	c.AbiId = field.NewString(table, "abi_id")
+	c.AbiId = field.NewInt64(table, "abi_id")
+	c.Name = field.NewString(table, "name")
+	c.Symbol = field.NewString(table, "symbol")
+	c.Decimal = field.NewInt64(table, "decimals")
+	c.TotalSupply = field.NewString(table, "total_supply")
 
 	c.fillFieldMap()
 
@@ -96,12 +108,16 @@ func (c *contract) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *contract) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 6)
+	c.fieldMap = make(map[string]field.Expr, 10)
 	c.fieldMap["id"] = c.ID
 	c.fieldMap["contract_address"] = c.Address
 	c.fieldMap["creator"] = c.Creator
 	c.fieldMap["deploy_txn_hash"] = c.DeployTxnHash
 	c.fieldMap["abi_id"] = c.AbiId
+	c.fieldMap["name"] = c.Name
+	c.fieldMap["symbol"] = c.Symbol
+	c.fieldMap["decimals"] = c.Decimal
+	c.fieldMap["total_supply"] = c.TotalSupply
 
 }
 

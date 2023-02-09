@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/berachain/stargazer/wasp/database"
 	"github.com/berachain/stargazer/wasp/queryClient"
@@ -19,11 +18,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	client, err := ethclient.Dial(os.Getenv("RPC_ENDPOINT"))
+
+	// client, err := ethclient.Dial(os.Getenv("RPC_ENDPOINT"))
+	client, err := ethclient.Dial("wss://eth-goerli.g.alchemy.com/v2/2Vd54oL5HObq1Yl_aZfLZzBz37_FCNdP")
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	queryClient := queryClient.NewQueryClient(client)
+	queryClient := queryClient.NewQueryClient(client, db.Gorm)
 	repos := repository.InitRepositories(db, queryClient)
 
 	syncrClient := syncr.NewSyncrClient(client, repos)

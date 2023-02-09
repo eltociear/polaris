@@ -10,9 +10,8 @@ var _ wasp.BaseModel = (*Erc721Tokens)(nil)
 
 type Erc721Tokens struct {
 	wasp.BasePersistenceModal `gorm:"type:int;auto_increment;not null;"`
-	BalanceId                 int64  `gorm:"type:int;not null;column:balance_id" json:"balance_id"`
-	TokenId                   int64  `gorm:"type:int;not null;column:token_id" json:"token_id"`
-	Data                      []byte `gorm:"type:bytea;not null;column:data" json:"data"`
+	BalanceId                 int64 `gorm:"type:int;not null;column:balance_id" json:"balance_id"`
+	TokenId                   int64 `gorm:"type:int;not null;column:token_id" json:"token_id"`
 }
 
 func (m *Erc721Tokens) GetId() int64 {
