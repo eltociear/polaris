@@ -6,6 +6,7 @@ const (
 	INVALID_PARAMS = 400
 
 	ERROR_BLOCK_NOT_FOUND = 100001
+	ERROR_TXN_NOT_FOUND   = 100002
 )
 
 var MsgFlags = map[int]string{
@@ -13,6 +14,7 @@ var MsgFlags = map[int]string{
 	ERROR:                 "fail",
 	INVALID_PARAMS:        "Invalid params.",
 	ERROR_BLOCK_NOT_FOUND: "Block not found.",
+	ERROR_TXN_NOT_FOUND:   "Txn not found.",
 }
 
 // GetMsg get error information based on Code

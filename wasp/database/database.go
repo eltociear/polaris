@@ -81,6 +81,7 @@ func OpenGorm() *gorm.DB {
 		&models.Erc721Balance{},
 		&models.Erc721Tokens{})
 
+	dbClient.Set("gorm:auto_preload", true)
 	if err != nil {
 		panic(err)
 	}

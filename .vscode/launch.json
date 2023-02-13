@@ -5,11 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Package",
+            "name": "Debug Syncr",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "./wasp/main/main.go",
+            "envFile": "/Users/garrettparris/Documents/stargazer/wasp/.env",
+        },
+        {
+            "name": "Debug API",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "./cmd/indexerd",
             "envFile": "/Users/garrettparris/Documents/stargazer/wasp/.env",
         }
     ]

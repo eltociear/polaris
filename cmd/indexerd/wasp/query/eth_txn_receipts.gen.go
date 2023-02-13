@@ -33,7 +33,7 @@ func newEthTxnReceipt(db *gorm.DB, opts ...gen.DOOption) ethTxnReceipt {
 	_ethTxnReceipt.Status = field.NewUint64(tableName, "status")
 	_ethTxnReceipt.CumulativeGasUsed = field.NewUint64(tableName, "cumulative_gas_used")
 	_ethTxnReceipt.Bloom = field.NewBytes(tableName, "bloom")
-	_ethTxnReceipt.TxHash = field.NewString(tableName, "tx_hash")
+	_ethTxnReceipt.TxHash = field.NewBytes(tableName, "tx_hash")
 	_ethTxnReceipt.ContractAddress = field.NewBytes(tableName, "contract_address")
 	_ethTxnReceipt.GasUsed = field.NewUint64(tableName, "gas_used")
 	_ethTxnReceipt.BlockHash = field.NewBytes(tableName, "block_hash")
@@ -60,7 +60,7 @@ type ethTxnReceipt struct {
 	Status            field.Uint64
 	CumulativeGasUsed field.Uint64
 	Bloom             field.Bytes
-	TxHash            field.String
+	TxHash            field.Bytes
 	ContractAddress   field.Bytes
 	GasUsed           field.Uint64
 	BlockHash         field.Bytes
@@ -89,7 +89,7 @@ func (e *ethTxnReceipt) updateTableName(table string) *ethTxnReceipt {
 	e.Status = field.NewUint64(table, "status")
 	e.CumulativeGasUsed = field.NewUint64(table, "cumulative_gas_used")
 	e.Bloom = field.NewBytes(table, "bloom")
-	e.TxHash = field.NewString(table, "tx_hash")
+	e.TxHash = field.NewBytes(table, "tx_hash")
 	e.ContractAddress = field.NewBytes(table, "contract_address")
 	e.GasUsed = field.NewUint64(table, "gas_used")
 	e.BlockHash = field.NewBytes(table, "block_hash")

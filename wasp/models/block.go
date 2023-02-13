@@ -29,7 +29,7 @@ type EthBlockModel struct {
 	MixDigest                 []byte             `gorm:"type:bytea;not null;" json:"mixHash"`
 	Nonce                     uint64             `gorm:"type:int;not null;" json:"nonce"`
 	BaseFee                   []byte             `gorm:"type:bytea;not null;" json:"baseFeePerGas"`
-	Txs                       []TransactionModel `gorm:"foreignkey:number;references:block_number"`
+	Txs                       []TransactionModel `gorm:"foreignKey:Number;references:block_number"`
 	Hash                      []byte             `gorm:"type:bytea;not null;unique" json:"hash"`
 	Size                      string             `gorm:"type:varchar(64);not null;" json:"size"`
 	ReceivedAt                time.Time          `gorm:"type:timestamp;not null;" json:"receivedAt"`

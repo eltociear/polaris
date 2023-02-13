@@ -17,7 +17,7 @@ type EthTxnReceipt struct {
 	CumulativeGasUsed         uint64   `gorm:"type:int;not null;" json:"cumulativeGasUsed"`
 	Bloom                     []byte   `gorm:"type:bytea;not null;" json:"logsBloom"`
 	Logs                      []EthLog `gorm:"foreignkey:tx_hash;references:tx_hash" json:"logs"`
-	TxHash                    []byte   `gorm:"type:bytea;not null;column:tx_hash;unique" json:"transactionHash"`
+	TxHash                    string   `gorm:"type:varchar(128);not null;column:tx_hash;unique" json:"transactionHash"`
 	ContractAddress           []byte   `gorm:"type:bytea;not null;" json:"contractAddress"`
 	GasUsed                   uint64   `gorm:"type:int;not null;" json:"gasUsed"`
 	BlockHash                 []byte   `gorm:"type:bytea;not null;" json:"blockHash"`
@@ -33,7 +33,7 @@ func GethToReceiptModel(r *types.Receipt, logs []EthLog) *EthTxnReceipt {
 		CumulativeGasUsed: r.CumulativeGasUsed,
 		Bloom:             r.Bloom.Bytes(),
 		Logs:              logs,
-		TxHash:            r.TxHash.Bytes(),
+		TxHash:            r.TxHash.Hex(),
 		ContractAddress:   r.ContractAddress.Bytes(),
 		GasUsed:           r.GasUsed,
 		BlockHash:         r.BlockHash.Bytes(),

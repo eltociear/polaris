@@ -14,7 +14,7 @@ var _ wasp.BaseModel = (*TransactionModel)(nil)
 type TransactionModel struct {
 	wasp.BasePersistenceModal `gorm:"type:int;auto_increment;not null;"`
 	Number                    string        `gorm:"type:varchar(64);not null;column:number;"`
-	Hash                      []byte        `gorm:"type:bytea;not null;column:tx_hash"`
+	Hash                      string        `gorm:"type:varchar(128);not null;column:tx_hash"`
 	Size                      string        `gorm:"type:varchar(64);not null"`
 	Time                      uint64        `gorm:"type:int;not null;"`
 	From                      []byte        `gorm:"type:bytea;not null;"`
@@ -43,7 +43,7 @@ func GethToTransactionModel(
 	from, _ := signer.Sender(txn)
 	if txn.To() == nil {
 		return &TransactionModel{
-			Hash:      txn.Hash().Bytes(),
+			Hash:      txn.Hash().Hex(),
 			Size:      txn.Size().String(),
 			Time:      time,
 			From:      from.Bytes(),
@@ -61,7 +61,7 @@ func GethToTransactionModel(
 		}
 	}
 	return &TransactionModel{
-		Hash:      txn.Hash().Bytes(),
+		Hash:      txn.Hash().Hex(),
 		Size:      txn.Size().String(),
 		Time:      time,
 		From:      txnMsg.From().Bytes(),

@@ -12,7 +12,7 @@ type Contract struct {
 	wasp.BasePersistenceModal `gorm:"type:int;auto_increment;not null;"`
 	Address                   []byte `gorm:"type:bytea;column:contract_address" json:"contract_address"`
 	Creator                   []byte `gorm:"type:bytea;column:creator" json:"creator"`
-	DeployTxnHash             []byte `gorm:"type:bytea;column:deploy_txn_hash" json:"txn_hash"`
+	DeployTxnHash             string `gorm:"type:varchar(128);column:deploy_txn_hash" json:"txn_hash"`
 	AbiId                     int64  `gorm:"type:int;not null;column:abi_id" json:"abi_id"`
 	Abi                       Abi    `gorm:"foreignkey:id;references:abi_id" json:"contract"`
 	Name                      string `gorm:"type:varchar(64);column:name" json:"name"`

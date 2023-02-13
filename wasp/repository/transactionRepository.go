@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -75,7 +74,6 @@ func (r *TransactionRepo) BuildTransaction(
 	if txnModel.To == nil {
 		//contract creation
 		fmt.Println("CONTRACT CREATION")
-		fmt.Println(hex.EncodeToString(txnModel.Hash))
 
 		c := r.BuildContract(txnModel)
 		res := r.CreateContract(c)

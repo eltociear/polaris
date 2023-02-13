@@ -29,7 +29,7 @@ func newTransactionModel(db *gorm.DB, opts ...gen.DOOption) transactionModel {
 	_transactionModel.ALL = field.NewAsterisk(tableName)
 	_transactionModel.ID = field.NewInt64(tableName, "id")
 	_transactionModel.Number = field.NewString(tableName, "number")
-	_transactionModel.Hash = field.NewBytes(tableName, "tx_hash")
+	_transactionModel.Hash = field.NewString(tableName, "tx_hash")
 	_transactionModel.Size = field.NewString(tableName, "size")
 	_transactionModel.Time = field.NewUint64(tableName, "time")
 	_transactionModel.From = field.NewBytes(tableName, "from")
@@ -65,7 +65,7 @@ type transactionModel struct {
 	ALL       field.Asterisk
 	ID        field.Int64
 	Number    field.String
-	Hash      field.Bytes
+	Hash      field.String
 	Size      field.String
 	Time      field.Uint64
 	From      field.Bytes
@@ -98,7 +98,7 @@ func (t *transactionModel) updateTableName(table string) *transactionModel {
 	t.ALL = field.NewAsterisk(table)
 	t.ID = field.NewInt64(table, "id")
 	t.Number = field.NewString(table, "number")
-	t.Hash = field.NewBytes(table, "tx_hash")
+	t.Hash = field.NewString(table, "tx_hash")
 	t.Size = field.NewString(table, "size")
 	t.Time = field.NewUint64(table, "time")
 	t.From = field.NewBytes(table, "from")
