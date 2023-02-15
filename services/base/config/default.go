@@ -14,7 +14,11 @@
 
 package config
 
-import "time"
+import (
+	"time"
+
+	config "github.com/berachain/stargazer/services/base/server/config"
+)
 
 var (
 	// `DefaultAPINamespaces` is the default namespaces the JSON-RPC server exposes.
@@ -51,8 +55,8 @@ const (
 )
 
 // `DefaultServer` returns the default TLS configuration.
-func DefaultServer() *Server {
-	return &Server{
+func DefaultServer() *config.ServerConfig {
+	return &config.ServerConfig{
 		EnableAPIs:            DefaultAPINamespaces,
 		Address:               DefaultJSONRPCAddress,
 		WSAddress:             DefaultJSONRPCWSAddress,
@@ -67,9 +71,30 @@ func DefaultServer() *Server {
 }
 
 // DefaultConfig returns the default TLS configuration.
-func DefaultTLSConfig() *TLSConfig {
-	return &TLSConfig{
+func DefaultTLSConfig() *config.TLSConfig {
+	return &config.TLSConfig{
 		CertPath: "",
 		KeyPath:  "",
+	}
+}
+
+const (
+	// `DefaultCMRPCEndpoint` is the default address of the Comet RPC server.
+	DefaultCMRPCEndpoint = "http://0.0.0.0:26657"
+
+	// `DefaultRPCTimeout` is the default timeout for the RPC server.
+	DefaultRPCTimeout = "10s"
+
+	// `DefaultChainID` is the default chain ID.
+	DefaultChainID = "berachain_420-1"
+)
+
+// DefaultRPC returns the default RPC configuration.
+func DefaultCosmosConnection() *CosmosConnection {
+	return &CosmosConnection{
+		CMRPCEndpoint: DefaultCMRPCEndpoint,
+		GRPCEndpoint:  DefaultGRPCAddress,
+		RPCTimeout:    DefaultRPCTimeout,
+		ChainID:       DefaultChainID,
 	}
 }

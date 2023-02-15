@@ -12,29 +12,31 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package eth
+package api
 
 import (
-	"github.com/berachain/stargazer/jsonrpc/cosmos"
-	libtypes "github.com/berachain/stargazer/lib/types"
-	"go.uber.org/zap/zapcore"
+	"github.com/berachain/stargazer/services/base/cosmos"
+	"github.com/berachain/stargazer/services/jsonrpc/api/eth"
+	"github.com/berachain/stargazer/services/jsonrpc/api/node"
+	"github.com/berachain/stargazer/services/jsonrpc/logger"
 )
 
-// `API` contains the Eth API.
-type api struct {
-	client *cosmos.Client
-	logger libtypes.Logger[zapcore.Field]
+// `Service` is an interface that all API services must implement.
+type Service interface {
+	Namespace() string
 }
 
-// `NewAPI` returns a new `api` object.
-func NewAPI(client *cosmos.Client, logger libtypes.Logger[zapcore.Field]) *api { //nolint: revive // by design.
-	return &api{
-		client: client,
-		logger: logger,
+func Build(
+	namespace string,
+	client *cosmos.Client,
+	logger logger.Zap,
+) Service {
+	switch namespace {
+	case "node":
+		return node.NewAPI(logger)
+	case "eth":
+		return eth.NewAPI(client, logger)
+	default:
+		return nil
 	}
-}
-
-// `Namespace` impements the api.Service interface.
-func (api) Namespace() string {
-	return "eth"
 }

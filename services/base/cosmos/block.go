@@ -15,14 +15,14 @@
 package cosmos
 
 import (
+	tmrpctypes "github.com/cometbft/cometbft/rpc/core/types"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	tmrpctypes "github.com/tendermint/tendermint/rpc/core/types"
 	"go.uber.org/zap"
 )
 
 // `LatestBlockNumber` returns the the latest block number as reported at the application layer.
 func (c *Client) LatestBlockNumber() (hexutil.Uint64, error) {
-	res, err := c.cmc.ABCIInfo(c.ctx)
+	res, err := c.clientCtx.Client.ABCIInfo(c.ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -40,7 +40,7 @@ func (c *Client) CometBlockByNumber(height int64) (*tmrpctypes.ResultBlock, erro
 		height = int64(n)
 	}
 
-	resBlock, err := c.cmc.Block(c.ctx, &height)
+	resBlock, err := c.clientCtx.Client.Block(c.ctx, &height)
 	if err != nil {
 		c.logger.Debug("CometBlockClient client failed to get block",
 			zap.Int64("height", height), zap.String("error", err.Error()))

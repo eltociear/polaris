@@ -12,14 +12,37 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package config
+package log
+
+import "github.com/ethereum/go-ethereum/log"
 
 type (
-	// RPC defines RPC configuration of both the gRPC and CometBFT nodes.
-	RPC struct {
-		CMRPCEndpoint string `mapstructure:"cmrpc-endpoint" validate:"required"`
-		GRPCEndpoint  string `mapstructure:"grpc-endpoint" validate:"required"`
-		RPCTimeout    string `mapstructure:"rpc-timeout" validate:"required"`
-		ChainID       string `mapstructure:"chain-id" validate:"required"`
-	}
+	// `Record` is a log record.
+	Record = log.Record
+)
+
+var (
+	// `Root` is the root logger.
+	Root = log.Root
+
+	// `LvlTrace` is the trace log level.
+	LvlTrace = log.LvlTrace
+
+	// `LvlDebug` is the debug log level.
+	LvlDebug = log.LvlDebug
+
+	// `LvlInfo` is the info log level.
+	LvlInfo = log.LvlInfo
+
+	// `LvlWarn` is the warn log level.
+	LvlWarn = log.LvlWarn
+
+	// `LvlError` is the error log level.
+	LvlError = log.LvlError
+
+	// `LvlCrit` is the critical log level.
+	LvlCrit = log.LvlCrit
+
+	// `FuncHandler` is a log handler.
+	FuncHandler = log.FuncHandler
 )

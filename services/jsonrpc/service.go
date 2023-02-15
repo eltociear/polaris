@@ -15,7 +15,6 @@
 package jsonrpc
 
 import (
-	"context"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,23 +22,22 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"go.uber.org/zap"
 
-	"github.com/berachain/stargazer/jsonrpc/server"
-	"github.com/berachain/stargazer/jsonrpc/server/config"
+	config "github.com/berachain/stargazer/services/base/server/config"
 )
 
 // `Service` is a JSON-RPC endpoint service.
 type Service struct {
 	logger *zap.Logger
-	server *server.Service
+	server *JsonRpcServer
 }
 
 // `New` is a constructor for `Service`.
-func New(config config.Server, clientCtx client.Context) *Service {
+func New(config config.ServerConfig, clientCtx client.Context) *Service {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync() //nolint: errcheck // ignore error
 	return &Service{
 		logger: logger,
-		server: server.New(context.Background(), logger, config, clientCtx),
+		server: NewJsonRpcServer(),
 	}
 }
 

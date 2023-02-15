@@ -12,13 +12,13 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package config
+package server
 
 import "time"
 
 type (
 	// `Server` defines the configuration for the JSON-RPC server.
-	Server struct {
+	ServerConfig struct {
 		// `API` defines a list of JSON-RPC namespaces to be enabled.
 		EnableAPIs []string `mapstructure:"api"`
 

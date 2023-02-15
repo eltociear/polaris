@@ -17,11 +17,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/berachain/stargazer/jsonrpc/server/config"
-	"github.com/cosmos/cosmos-sdk/client"
+	client "github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
 
-	jsonrpc "github.com/berachain/stargazer/jsonrpc"
+	"github.com/berachain/stargazer/services/base/config"
+	jsonrpc "github.com/berachain/stargazer/services/jsonrpc"
 )
 
 func main() {

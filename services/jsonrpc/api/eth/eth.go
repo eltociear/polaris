@@ -12,38 +12,29 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package cosmos
+package eth
 
 import (
-	"context"
-
-	"github.com/berachain/stargazer/jsonrpc/logger"
-	"github.com/cosmos/cosmos-sdk/client"
+	libtypes "github.com/berachain/stargazer/lib/types"
+	"github.com/berachain/stargazer/services/base/cosmos"
+	"go.uber.org/zap/zapcore"
 )
 
-// `Client` is a wrapper around the Cosmos SDK `client.Context` that implements querying and
-// transaction capabilities for the Cosmos SDK.
-type Client struct {
-	// `ctx` is the context instance.
-	ctx context.Context
-	// `clientCtx` is the Cosmos SDK `client.Context` instance.
-	clientCtx client.Context
-	// `cmclient` is the `CometClient` context.
-	cmc client.TendermintRPC
-	// `logger` is the logger instance.
-	logger logger.Zap
+// `API` contains the Eth API.
+type api struct {
+	client *cosmos.Client
+	logger libtypes.Logger[zapcore.Field]
 }
 
-// `New` creates a new `CosmosClient`.
-func New(
-	ctx context.Context,
-	clientCtx client.Context,
-	logger logger.Zap,
-) *Client {
-	return &Client{
-		ctx:       ctx,
-		clientCtx: clientCtx,
-		logger:    logger,
-		// cmc:       utils.MustGetAs[client.TendermintRPC](clientCtx.Client),
+// `NewAPI` returns a new `api` object.
+func NewAPI(client *cosmos.Client, logger libtypes.Logger[zapcore.Field]) *api { //nolint: revive // by design.
+	return &api{
+		client: client,
+		logger: logger,
 	}
+}
+
+// `Namespace` impements the api.Service interface.
+func (api) Namespace() string {
+	return "eth"
 }
