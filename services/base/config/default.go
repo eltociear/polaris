@@ -15,9 +15,15 @@
 package config
 
 import (
+	"bufio"
+	"os"
 	"time"
 
+	"github.com/evmos/ethermint/crypto/hd"
+	"github.com/evmos/ethermint/encoding"
+
 	config "github.com/berachain/stargazer/services/base/server/config"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 )
 
 var (
@@ -87,6 +93,10 @@ const (
 
 	// `DefaultChainID` is the default chain ID.
 	DefaultChainID = "berachain_420-1"
+
+	DefaultKeyringFile        = ".keyring"
+	DefaultKeyringDir         = "./"
+	DefaultKeyringServiceName = "test"
 )
 
 // DefaultRPC returns the default RPC configuration.
@@ -96,5 +106,23 @@ func DefaultCosmosConnection() *CosmosConnection {
 		GRPCEndpoint:  DefaultGRPCAddress,
 		RPCTimeout:    DefaultRPCTimeout,
 		ChainID:       DefaultChainID,
+		Keyring:       nil,
+	}
+}
+
+// DefaultRPC returns the default RPC configuration.
+func DefaultSigningCosmosConnection() *CosmosConnection {
+	DefaultEncodingConfig := encoding.MakeConfig(beramodules.GetModuleManager())
+	KeyringOptions := []keyring.Option{hd.EthSecp256k1Option()}
+	buf := bufio.NewReader(os.Stdin)
+
+	DefaultKeyring, _ := keyring.New(DefaultKeyringServiceName, DefaultKeyringFile, DefaultKeyringDir, buf, DefaultEncodingConfig.Codec, KeyringOptions...)
+
+	return &CosmosConnection{
+		CMRPCEndpoint: DefaultCMRPCEndpoint,
+		GRPCEndpoint:  DefaultGRPCAddress,
+		RPCTimeout:    DefaultRPCTimeout,
+		ChainID:       DefaultChainID,
+		Keyring:       DefaultKeyring,
 	}
 }

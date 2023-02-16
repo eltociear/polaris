@@ -97,3 +97,45 @@ func CreateClientContext(config config.CosmosConnection) (client.Context, error)
 
 	return clientCtx, nil
 }
+
+func CreateSigningClientContext(config config.CosmosConnection) (client.Context, error) {
+	httpClient, err := tmjsonclient.DefaultHTTPClient(config.CMRPCEndpoint)
+	if err != nil {
+		return client.Context{}, err
+	}
+
+	httpClient.Timeout, err = time.ParseDuration(config.RPCTimeout)
+	if err != nil {
+		return client.Context{}, err
+	}
+	tmRPC, err := rpchttp.NewWithClient(config.CMRPCEndpoint, "/websocket", httpClient)
+	if err != nil {
+		return client.Context{}, err
+	}
+
+	clientCtx := client.Context{
+		ChainID: config.ChainID,
+		// InterfaceRegistry: oc.Encoding.InterfaceRegistry,
+		Output:        os.Stderr,
+		BroadcastMode: flags.BroadcastSync,
+		// TxConfig:      oc.Encoding.TxConfig,
+		// AccountRetriever:  authtypes.AccountRetriever{},
+		// Codec:       oc.Encoding.Codec,
+		// LegacyAmino: oc.Encoding.Amino,
+		// Input:       os.Stdin,
+		NodeURI: config.CMRPCEndpoint,
+		Client:  tmRPC,
+		Keyring: config.Keyring,
+		// FromAddress:  oc.OracleAddr,
+		// FromName:     keyInfo.Name,
+		// From:         keyInfo.Name,
+		OutputFormat: "json",
+		UseLedger:    false,
+		Simulate:     false,
+		GenerateOnly: false,
+		Offline:      false,
+		SkipConfirm:  true,
+	}
+
+	return clientCtx, nil
+}

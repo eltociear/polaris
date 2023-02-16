@@ -4,6 +4,7 @@ import (
 	"time"
 
 	config "github.com/berachain/stargazer/services/base/server/config"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 )
 
 type (
@@ -53,10 +54,11 @@ type (
 type (
 	// RPC defines RPC configuration of both the gRPC and CometBFT nodes.
 	CosmosConnection struct {
-		CMRPCEndpoint string `mapstructure:"cmrpc-endpoint" validate:"required"`
-		GRPCEndpoint  string `mapstructure:"grpc-endpoint" validate:"required"`
-		RPCTimeout    string `mapstructure:"rpc-timeout" validate:"required"`
-		ChainID       string `mapstructure:"chain-id" validate:"required"`
+		CMRPCEndpoint string          `mapstructure:"cmrpc-endpoint" validate:"required"`
+		GRPCEndpoint  string          `mapstructure:"grpc-endpoint" validate:"required"`
+		RPCTimeout    string          `mapstructure:"rpc-timeout" validate:"required"`
+		ChainID       string          `mapstructure:"chain-id" validate:"required"`
+		Keyring       keyring.Keyring `mapstructure:"keyring"`
 	}
 )
 
@@ -73,5 +75,13 @@ func DefaultConfig() *Config {
 	return &Config{
 		Server: *DefaultServer(),
 		Client: *DefaultCosmosConnection(),
+	}
+}
+
+// `DefaultConfig` returns a default configuration for the JSON-RPC service.
+func DefaultSigningConfig() *Config {
+	return &Config{
+		Server: *DefaultServer(),
+		Client: *DefaultSigningCosmosConnection(),
 	}
 }
