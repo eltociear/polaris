@@ -22,20 +22,20 @@ import (
 )
 
 // Compile-time type assertions.
-var _ libtypes.Cloneable[Slots] = Slots{}
-var _ fmt.Stringer = Slots{}
+var _ libtypes.Cloneable[Storage] = Storage{}
+var _ fmt.Stringer = Storage{}
 
-// `Storage` represents the account Storage map as a slice of single key value
-// State pairs. This helps to ensure that the Storage map can be iterated over
+// `Storage` represents the account Storage map as a slice of single key-value
+// Slot pairs. This helps to ensure that the Storage map can be iterated over
 // deterministically.
-type Slots []Slot
+type Storage []*Slot
 
 // `ValidateBasic` performs basic validation of the Storage data structure.
 // It checks for duplicate keys and calls `ValidateBasic` on each `State`.
-func (s Slots) ValidateBasic() error {
-	seenSlots := make(map[string]bool)
+func (s Storage) ValidateBasic() error {
+	seenSlots := make(map[string]struct{})
 	for i, slot := range s {
-		if seenSlots[slot.Key] {
+		if _, found := seenSlots[slot.Key]; found {
 			return errors.Wrapf(ErrInvalidState, "duplicate state key %d: %s", i, slot.Key)
 		}
 
@@ -43,13 +43,13 @@ func (s Slots) ValidateBasic() error {
 			return err
 		}
 
-		seenSlots[slot.Key] = true
+		seenSlots[slot.Key] = struct{}{}
 	}
 	return nil
 }
 
 // `String` implements `fmt.Stringer`.
-func (s Slots) String() string {
+func (s Storage) String() string {
 	var str string
 	for _, slot := range s {
 		str += fmt.Sprintf("%s\n", slot.String())
@@ -59,8 +59,8 @@ func (s Slots) String() string {
 }
 
 // `Clone` implements `types.Cloneable`.
-func (s Slots) Clone() Slots {
-	cpy := make(Slots, len(s))
+func (s Storage) Clone() Storage {
+	cpy := make(Storage, len(s))
 	copy(cpy, s)
 
 	return cpy

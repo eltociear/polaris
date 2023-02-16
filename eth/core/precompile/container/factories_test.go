@@ -18,11 +18,11 @@ import (
 	"context"
 	"math/big"
 
+	"github.com/berachain/stargazer/eth/common"
 	"github.com/berachain/stargazer/eth/core/precompile/container"
 	"github.com/berachain/stargazer/eth/core/vm"
-	"github.com/berachain/stargazer/lib/common"
-	solidity "github.com/berachain/stargazer/testutil/contracts/solidity/generated"
-	"github.com/berachain/stargazer/types/abi"
+	solidity "github.com/berachain/stargazer/eth/testutil/contracts/solidity/generated"
+	"github.com/berachain/stargazer/eth/types/abi"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -116,10 +116,14 @@ func (ms *mockStateless) RequiredGas(input []byte) uint64 {
 }
 
 func (ms *mockStateless) Run(
-	ctx context.Context, statedb vm.GethStateDB, input []byte,
+	ctx context.Context, input []byte,
 	caller common.Address, value *big.Int, readonly bool,
 ) ([]byte, error) {
 	return nil, nil
+}
+
+func (ms *mockStateless) WithStateDB(vm.GethStateDB) vm.PrecompileContainer {
+	return ms
 }
 
 type mockStateful struct {

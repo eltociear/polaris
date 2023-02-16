@@ -18,8 +18,8 @@ import (
 	"context"
 	"math/big"
 
+	"github.com/berachain/stargazer/eth/common"
 	"github.com/berachain/stargazer/eth/core/vm"
-	"github.com/berachain/stargazer/lib/common"
 	"github.com/berachain/stargazer/lib/errors"
 	"github.com/berachain/stargazer/lib/errors/debug"
 	"github.com/berachain/stargazer/lib/utils"
@@ -28,31 +28,26 @@ import (
 // `NumBytesMethodID` is the number of bytes used to represent a ABI method's ID.
 const NumBytesMethodID = 4
 
-// Compile-time assertion to ensure `Stateful` is a `PrecompileContainer`.
-var _ vm.PrecompileContainer = (*Stateful)(nil)
-
-// `Stateful` is a container for running stateful and dynamic precompiled contracts.
-type Stateful struct {
-	vm.BasePrecompileImpl
-
+// `stateful` is a container for running stateful and dynamic precompiled contracts.
+type stateful struct {
+	// `RegistrablePrecompile` is the base precompile implementation.
+	vm.RegistrablePrecompile
 	// `idsToMethods` is a mapping of method IDs (string of first 4 bytes of the keccak256 hash of
 	// method signatures) to native precompile functions. The signature key is provided by the
 	// precompile creator and must exactly match the signature in the geth abi.Method.Sig field
 	// (geth abi format). Please check core/precompile/container/method.go for more information.
 	idsToMethods map[string]*Method
-
-	// TODO: implement
-	// receive *Method
-
-	// TODO: implement
-	// fallback *Method
+	// receive      *Method // TODO: implement
+	// fallback     *Method // TODO: implement
 }
 
-// `NewStateful` creates and returns a new `Stateful` with the given method ids precompile functions map.
-func NewStateful(bci vm.BasePrecompileImpl, idsToMethods map[string]*Method) *Stateful {
-	return &Stateful{
-		BasePrecompileImpl: bci,
-		idsToMethods:       idsToMethods,
+// `NewStateful` creates and returns a new `stateful` with the given method ids precompile functions map.
+func NewStateful(
+	rp vm.RegistrablePrecompile, idsToMethods map[string]*Method,
+) vm.PrecompileContainer {
+	return &stateful{
+		RegistrablePrecompile: rp,
+		idsToMethods:          idsToMethods,
 	}
 }
 
@@ -60,9 +55,8 @@ func NewStateful(bci vm.BasePrecompileImpl, idsToMethods map[string]*Method) *St
 // output.
 //
 // `Run` implements `PrecompileContainer`.
-func (sc *Stateful) Run(
+func (sc *stateful) Run(
 	ctx context.Context,
-	sdb vm.GethStateDB,
 	input []byte,
 	caller common.Address,
 	value *big.Int,
@@ -70,9 +64,6 @@ func (sc *Stateful) Run(
 ) ([]byte, error) {
 	if sc.idsToMethods == nil {
 		return nil, ErrContainerHasNoMethods
-	}
-	if sdb == nil {
-		return nil, ErrIncompatibleStateDB
 	}
 	if len(input) < NumBytesMethodID {
 		return nil, ErrInvalidInputToPrecompile
@@ -91,7 +82,7 @@ func (sc *Stateful) Run(
 	}
 
 	// Execute the method registered with the given signature with the given args.
-	vals, logs, err := method.Execute(
+	vals, err := method.Execute(
 		ctx,
 		caller,
 		value,
@@ -110,18 +101,13 @@ func (sc *Stateful) Run(
 		return nil, err
 	}
 
-	// Add the logs to the logdb if there are no errors in container execution.
-	for _, log := range logs {
-		sdb.AddLog(log)
-	}
-
 	return ret, nil
 }
 
 // `RequiredGas` checks the Method corresponding to input for the required gas amount.
 //
 // `RequiredGas` implements PrecompileContainer.
-func (sc *Stateful) RequiredGas(input []byte) uint64 {
+func (sc *stateful) RequiredGas(input []byte) uint64 {
 	if sc.idsToMethods == nil || len(input) < NumBytesMethodID {
 		return 0
 	}

@@ -13,17 +13,3 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package keeper
-
-import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-)
-
-// `StakingKeeper` is the interface that the EVM module needs from the staking module.
-type StakingKeeper interface {
-	// `GetValidatorByConsAddr` returns the validator for a given consensus address.
-	GetValidatorByConsAddr(ctx sdk.Context, consAddr sdk.ConsAddress) (stakingtypes.ValidatorI, bool)
-
-	// `GetHistoricalInfo` returns the historical info for a given height.
-	GetHistoricalInfo(ctx sdk.Context, height int64) (stakingtypes.HistoricalInfo, bool)
-}

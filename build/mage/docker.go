@@ -26,7 +26,7 @@ var (
 	jsonrpcDockerPath      = "./jsonrpc/Dockerfile"
 	imageName              = "berachain-node"
 	testImageVersion       = "e2e-test-dev"
-	goVersion              = "1.19.4"
+	goVersion              = "1.19.5"
 	debianStaticImage      = "gcr.io/distroless/static-debian11"
 	golangAlpine           = "golang:1.19-alpine3.17"
 	precompileContractsDir = ""
@@ -52,7 +52,7 @@ func DockerBuildJSONRPCServer() error {
 		"-f", jsonrpcDockerPath,
 		"--build-arg", "GO_VERSION="+goVersion,
 		"--build-arg", "RUNNER_IMAGE="+debianStaticImage,
-		"-t", "jsonrpc-server",
+		"-t", "jsonrpc-server:dev",
 		".",
 	)
 }

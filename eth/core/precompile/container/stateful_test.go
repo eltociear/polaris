@@ -20,35 +20,30 @@ import (
 	"math/big"
 	"reflect"
 
+	"github.com/berachain/stargazer/eth/common"
 	"github.com/berachain/stargazer/eth/core/precompile/container"
-	"github.com/berachain/stargazer/eth/core/state"
-	coretypes "github.com/berachain/stargazer/eth/core/types"
 	"github.com/berachain/stargazer/eth/core/vm"
-	"github.com/berachain/stargazer/lib/common"
+	solidity "github.com/berachain/stargazer/eth/testutil/contracts/solidity/generated"
 	"github.com/berachain/stargazer/lib/utils"
-	"github.com/berachain/stargazer/testutil"
-	solidity "github.com/berachain/stargazer/testutil/contracts/solidity/generated"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Stateful Container", func() {
-	var sc *container.Stateful
-	var empty *container.Stateful
+	var sc vm.PrecompileContainer
+	var empty vm.PrecompileContainer
 	var ctx context.Context
 	var addr common.Address
 	var readonly bool
 	var value *big.Int
 	var blank []byte
 	var badInput = []byte{1, 2, 3, 4}
-	var sdb *mockSdb
 
 	BeforeEach(func() {
-		ctx = testutil.NewContext()
+		ctx = context.Background()
 		sc = container.NewStateful(&mockStateful{&mockBase{}}, mockIdsToMethods)
 		empty = container.NewStateful(nil, nil)
-		sdb = &mockSdb{&state.StateDB{}, 0}
 	})
 
 	Describe("Test Required Gas", func() {
@@ -74,48 +69,44 @@ var _ = Describe("Stateful Container", func() {
 	Describe("Test Run", func() {
 		It("should return an error for invalid cases", func() {
 			// empty input
-			_, err := empty.Run(ctx, sdb, blank, addr, value, readonly)
+			_, err := empty.Run(ctx, blank, addr, value, readonly)
 			Expect(err).To(MatchError("the stateful precompile has no methods to run"))
 
 			// invalid input
-			_, err = sc.Run(ctx, sdb, blank, addr, value, readonly)
+			_, err = sc.Run(ctx, blank, addr, value, readonly)
 			Expect(err).To(MatchError("input bytes to precompile container are invalid"))
 
-			// missing statedb
-			_, err = sc.Run(ctx, nil, blank, addr, value, readonly)
-			Expect(err).To(MatchError("statedb is not compatible with Stargazer"))
-
 			// method not found
-			_, err = sc.Run(ctx, sdb, badInput, addr, value, readonly)
+			_, err = sc.Run(ctx, badInput, addr, value, readonly)
 			Expect(err).To(MatchError("precompile method not found in contract ABI"))
 
 			// geth unpacking error
-			_, err = sc.Run(ctx, sdb, append(getOutputABI.ID, byte(1), byte(2)), addr, value, readonly)
+			_, err = sc.Run(ctx, append(getOutputABI.ID, byte(1), byte(2)), addr, value, readonly)
 			Expect(err).ToNot(BeNil())
 
 			// precompile exec error
-			_, err = sc.Run(ctx, sdb, getOutputPartialABI.ID, addr, value, readonly)
+			_, err = sc.Run(ctx, getOutputPartialABI.ID, addr, value, readonly)
 			Expect(err.Error()).To(Equal("err during precompile execution: getOutputPartial"))
 
 			// precompile returns vals when none expected
 			inputs, err := contractFuncStrABI.Inputs.Pack("string")
 			Expect(err).To(BeNil())
-			_, err = sc.Run(ctx, sdb, append(contractFuncStrABI.ID, inputs...), addr, value, readonly)
+			_, err = sc.Run(ctx, append(contractFuncStrABI.ID, inputs...), addr, value, readonly)
 			Expect(err).ToNot(BeNil())
 
 			// geth output packing error
 			inputs, err = contractFuncAddrABI.Inputs.Pack(addr)
 			Expect(err).To(BeNil())
-			_, err = sc.Run(ctx, sdb, append(contractFuncAddrABI.ID, inputs...), addr, value, readonly)
+			_, err = sc.Run(ctx, append(contractFuncAddrABI.ID, inputs...), addr, value, readonly)
 			Expect(err).ToNot(BeNil())
 		})
 
 		It("should return properly for valid method calls", func() {
+			// sc.WithStateDB(sdb)
 			inputs, err := getOutputABI.Inputs.Pack("string")
 			Expect(err).To(BeNil())
-			ret, err := sc.Run(ctx, sdb, append(getOutputABI.ID, inputs...), addr, value, readonly)
+			ret, err := sc.Run(ctx, append(getOutputABI.ID, inputs...), addr, value, readonly)
 			Expect(err).To(BeNil())
-			Expect(sdb.count).To(Equal(2))
 			outputs, err := getOutputABI.Outputs.Unpack(ret)
 			Expect(err).To(BeNil())
 			Expect(len(outputs)).To(Equal(1))
@@ -164,15 +155,6 @@ var (
 	}
 )
 
-type mockSdb struct {
-	vm.StargazerStateDB
-	count int
-}
-
-func (ms *mockSdb) AddLog(log *coretypes.Log) {
-	ms.count++
-}
-
 type mockObject struct {
 	CreationHeight *big.Int
 	TimeStamp      string
@@ -184,10 +166,10 @@ func getOutput(
 	value *big.Int,
 	readonly bool,
 	args ...any,
-) ([]any, []*coretypes.Log, error) {
+) ([]any, error) {
 	str, ok := utils.GetAs[string](args[0])
 	if !ok {
-		return nil, nil, errors.New("cast error")
+		return nil, errors.New("cast error")
 	}
 	return []any{
 		[]mockObject{
@@ -196,7 +178,7 @@ func getOutput(
 				TimeStamp:      str,
 			},
 		},
-	}, []*coretypes.Log{{}, {}}, nil
+	}, nil
 }
 
 func getOutputPartial(
@@ -205,8 +187,8 @@ func getOutputPartial(
 	value *big.Int,
 	readonly bool,
 	args ...any,
-) ([]any, []*coretypes.Log, error) {
-	return nil, nil, errors.New("err during precompile execution")
+) ([]any, error) {
+	return nil, errors.New("err during precompile execution")
 }
 
 func contractFuncAddrInput(
@@ -215,12 +197,12 @@ func contractFuncAddrInput(
 	value *big.Int,
 	readonly bool,
 	args ...any,
-) ([]any, []*coretypes.Log, error) {
+) ([]any, error) {
 	_, ok := utils.GetAs[common.Address](args[0])
 	if !ok {
-		return nil, nil, errors.New("cast error")
+		return nil, errors.New("cast error")
 	}
-	return []any{"invalid - should be *big.Int here"}, nil, nil
+	return []any{"invalid - should be *big.Int here"}, nil
 }
 
 func contractFuncStrInput(
@@ -229,11 +211,11 @@ func contractFuncStrInput(
 	value *big.Int,
 	readonly bool,
 	args ...any,
-) ([]any, []*coretypes.Log, error) {
+) ([]any, error) {
 	addr, ok := utils.GetAs[string](args[0])
 	if !ok {
-		return nil, nil, errors.New("cast error")
+		return nil, errors.New("cast error")
 	}
 	ans := big.NewInt(int64(len(addr)))
-	return []any{ans}, nil, nil
+	return []any{ans}, nil
 }

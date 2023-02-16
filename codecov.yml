@@ -28,8 +28,9 @@ comment:
 ignore:
   - "**/*.pb.go"
   - "**/*.pb.gw.go"
-  - "**/*.pb.pulsar.go"
+  - "**/*.pulsar.go"
   - "**/*.abigen.go"
+  - "**/*.rlpgen.go"
   - "**/*.mock.go"
   - "**/proto"
   - "build/"

@@ -1,4 +1,4 @@
-// Copyright (C) 2022, Berachain Foundation. All rights reserved.
+// Copyright (C) 2023, Berachain Foundation. All rights reserved.
 // See the file LICENSE for licensing terms.
 //
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -19,8 +19,8 @@ import (
 	"github.com/berachain/stargazer/lib/ds/stack"
 	"github.com/berachain/stargazer/lib/utils"
 
-	"github.com/cosmos/cosmos-sdk/store/cachekv"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	"cosmossdk.io/store/cachekv"
+	storetypes "cosmossdk.io/store/types"
 )
 
 const (

@@ -15,26 +15,26 @@
 package state
 
 import (
-	"github.com/berachain/stargazer/lib/common"
+	"github.com/berachain/stargazer/eth/common"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("AddressStoragePrefix", func() {
+var _ = Describe("StorageKeyFor", func() {
 	It("returns a prefix to iterate over a given account storage", func() {
 		address := common.HexToAddress("0x1234567890abcdef1234567890abcdef12345678")
-		prefix := AddressStoragePrefix(address)
+		prefix := StorageKeyFor(address)
 		Expect(prefix).To(HaveLen(1 + common.AddressLength))
 		Expect(prefix[0]).To(Equal(keyPrefixStorage))
 		Expect(prefix[1:]).To(Equal(address.Bytes()))
 	})
 })
 
-var _ = Describe("StateKeyFor", func() {
+var _ = Describe("SlotKeyFor", func() {
 	It("returns a storage key for a given account and storage slot", func() {
 		address := common.HexToAddress("0x1234567890abcdef1234567890abcdef12345678")
 		slot := common.HexToHash("0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
-		key := KeyForSlot(address, slot)
+		key := SlotKeyFor(address, slot)
 		Expect(key).To(HaveLen(1 + common.AddressLength + common.HashLength))
 		Expect(key[0]).To(Equal(keyPrefixStorage))
 		Expect(key[1 : 1+common.AddressLength]).To(Equal(address.Bytes()))

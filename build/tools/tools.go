@@ -26,6 +26,7 @@ package tools
 import (
 	_ "github.com/bufbuild/buf/cmd/buf"
 	_ "github.com/cosmos/gosec/v2/cmd/gosec"
+	_ "github.com/ethereum/go-ethereum/rlp/rlpgen"
 	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
 	_ "github.com/google/addlicense"
 	_ "github.com/incu6us/goimports-reviser/v3"
@@ -34,5 +35,4 @@ import (
 	_ "github.com/securego/gosec/v2/cmd/gosec"
 	_ "github.com/segmentio/golines"
 	_ "golang.org/x/tools/cmd/goimports"
-	_ "golang.org/x/tools/gopls"
 )

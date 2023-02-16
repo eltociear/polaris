@@ -21,10 +21,9 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	"github.com/berachain/stargazer/eth/common"
 	"github.com/berachain/stargazer/eth/core/precompile/container"
-	coretypes "github.com/berachain/stargazer/eth/core/types"
-	"github.com/berachain/stargazer/lib/common"
-	"github.com/berachain/stargazer/types/abi"
+	"github.com/berachain/stargazer/eth/types/abi"
 )
 
 var _ = Describe("Method", func() {
@@ -117,6 +116,6 @@ func mockExecutable(
 	value *big.Int,
 	readonly bool,
 	args ...any,
-) ([]any, []*coretypes.Log, error) {
-	return nil, nil, nil
+) ([]any, error) {
+	return nil, nil
 }

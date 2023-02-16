@@ -19,32 +19,33 @@ import (
 	"github.com/berachain/stargazer/eth/params"
 	libtypes "github.com/berachain/stargazer/lib/types"
 
-	"context"
 	"math/big"
 
-	"github.com/berachain/stargazer/lib/common"
+	"github.com/berachain/stargazer/eth/common"
 )
 
 type (
-	// `StargazerEVM` defines an extension to the interface provided by Go-Ethereum to support additional
-	// state transition functionalities.
+	// `StargazerEVM` defines an extension to the interface provided by Go-Ethereum to support
+	// additional state transition functionalities.
 	StargazerEVM interface {
-		Reset(txCtx TxContext, sdb GethStateDB)
-		Create(caller ContractRef, code []byte,
-			gas uint64, value *big.Int,
+		// `Create` creates a new contract using the given code and returns the contract address.
+		Create(
+			caller ContractRef, code []byte, gas uint64, value *big.Int,
 		) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error)
-		Call(caller ContractRef, addr common.Address, input []byte,
-			gas uint64, value *big.Int,
+		// `Call` executes the given contract with the given input data and returns the output.
+		Call(
+			caller ContractRef, addr common.Address, input []byte, gas uint64, value *big.Int,
 		) (ret []byte, leftOverGas uint64, err error)
-
+		// `SetTxContext` sets the transaction context for the new transaction.
 		SetTxContext(txCtx TxContext)
-		SetTracer(tracer EVMLogger)
-		SetDebug(debug bool)
+		// `StateDB` returns the `StateDB` attached to this `StargazerEVM`.
 		StateDB() StargazerStateDB
-		TxContext() TxContext
-		Tracer() EVMLogger
+		// `Config` returns the `Config` attached to this `StargazerEVM`.
+		Config() Config
+		// `Context` returns the `BlockContext` attached to this `StargazerEVM`.
 		Context() BlockContext
-		ChainConfig() *params.EthChainConfig
+		// `ChainConfig` returns the `ChainConfig` attached to this `StargazerEVM`.
+		ChainConfig() *params.ChainConfig
 	}
 
 	// `StargazerStateDB` defines an extension to the interface provided by Go-Ethereum to support
@@ -52,26 +53,18 @@ type (
 	StargazerStateDB interface {
 		GethStateDB
 		libtypes.Finalizeable
-
-		// `GetContext` returns the Go context associated to the StateDB.
-		GetContext() context.Context
-
-		// TransferBalance transfers the balance from one account to another
+		// `Reset` resets the context for the new transaction.
+		libtypes.Resettable
+		// `TransferBalance` transfers the balance from one account to another
 		TransferBalance(common.Address, common.Address, *big.Int)
-
-		// `GetLogsAndClear` returns the logs of the tx `txHash`.
-		GetLogsAndClear(txHash common.Hash) []*coretypes.Log
+		// `BuildLogsAndClear` builds the logs for the tx with the given metadata. NOTE: must be
+		// called after `Finalize`.
+		BuildLogsAndClear(
+			txHash common.Hash, blockHash common.Hash, txIndex uint, logIndex uint,
+		) []*coretypes.Log
 	}
 
-	// `PrecompileRunner` defines the required function of a vm-specific precompile runner.
-	PrecompileRunner interface {
-		// `Run` runs a precompile container with the given statedb and returns the remaining gas.
-		Run(pc PrecompileContainer, ssdb StargazerStateDB, input []byte,
-			caller common.Address, value *big.Int, suppliedGas uint64, readonly bool,
-		) (ret []byte, remainingGas uint64, err error)
-	}
-
-	// `BasePrecompileImpl` is a type for the base precompile implementation, which only needs to
+	// `RegistrablePrecompile` is a type for the base precompile implementation, which only needs to
 	// provide an Ethereum address of where its contract is found.
-	BasePrecompileImpl = libtypes.Registrable[common.Address]
+	RegistrablePrecompile = libtypes.Registrable[common.Address]
 )

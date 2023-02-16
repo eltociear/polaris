@@ -1,4 +1,4 @@
-// Copyright (C) 2022, Berachain Foundation. All rights reserved.
+// Copyright (C) 2023, Berachain Foundation. All rights reserved.
 // See the file LICENSE for licensing terms.
 //
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -18,13 +18,13 @@ import (
 	"reflect"
 	"testing"
 
-	sdkcachekv "github.com/cosmos/cosmos-sdk/store/cachekv"
-	sdkcachemulti "github.com/cosmos/cosmos-sdk/store/cachemulti"
-	"github.com/cosmos/cosmos-sdk/store/dbadapter"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	sdkcachekv "cosmossdk.io/store/cachekv"
+	sdkcachemulti "cosmossdk.io/store/cachemulti"
+	"cosmossdk.io/store/dbadapter"
+	storetypes "cosmossdk.io/store/types"
+	dbm "github.com/cosmos/cosmos-db"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	dbm "github.com/tendermint/tm-db"
 )
 
 func TestSnapMulti(t *testing.T) {

@@ -42,14 +42,14 @@ var (
 	moq = "github.com/matryer/moq"
 
 	// Variables and Helpers.
-	cmds       = []string{"jsonrpcd"}
+	cmds       = []string{"jsonrpcd", "stargazerd"}
 	production = false
 	statically = false
 )
 
 // Runs a series of commonly used commands.
 func All() error {
-	cmds := []func() error{Build, ForgeBuild, Generate, Format, Proto, Lint, Test}
+	cmds := []func() error{Build, Generate, Proto, Format, Lint, Test}
 	for _, cmd := range cmds {
 		if err := cmd(); err != nil {
 			return err
@@ -126,6 +126,7 @@ func BuildJSONRPC() error {
 
 // Runs `go install` on the entire project.
 func Install() error {
+	PrintMageName()
 	production = true
 	statically = false
 
@@ -146,6 +147,7 @@ func Install() error {
 
 // Runs `go generate` on the entire project.
 func Generate() error {
+	PrintMageName()
 	if err := goInstall(moq); err != nil {
 		return err
 	}
@@ -155,6 +157,7 @@ func Generate() error {
 // Runs `go generate` on the entire project and verifies that no files were
 // changed.
 func GenerateCheck() error {
+	PrintMageName()
 	if err := Generate(); err != nil {
 		return err
 	}

@@ -14,6 +14,8 @@
 
 package types
 
+import "context"
+
 // `Cloneable` is an interface that defines a `Clone` method.
 type Cloneable[T any] interface {
 	Clone() T
@@ -71,5 +73,20 @@ type Controller[K comparable, T Controllable[K]] interface {
 
 // `Finalizeable` is an interface that defines a `Finalize` method.
 type Finalizeable interface {
+	// `Finalize` finalizes the state of the object.
 	Finalize()
+}
+
+// `Resettable` is an interface that defines a `Reset` method. The `Reset` method is usually used
+// to reset the state per transaction.
+type Resettable interface {
+	// `Reset` resets the state of the object with the new given context.
+	Reset(context.Context)
+}
+
+// `Preparable` is an interface that defines a `Prepare` method. The `Prepare` method is usually
+// used to prepare the state per block.
+type Preparable interface {
+	// `Prepare` prepares the state of the object with the new given context.
+	Prepare(context.Context)
 }

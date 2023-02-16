@@ -20,11 +20,10 @@ import (
 	"regexp"
 	"strings"
 
-	coretypes "github.com/berachain/stargazer/eth/core/types"
-	"github.com/berachain/stargazer/lib/common"
+	"github.com/berachain/stargazer/eth/common"
+	"github.com/berachain/stargazer/eth/types/abi"
 	"github.com/berachain/stargazer/lib/errors"
 	"github.com/berachain/stargazer/lib/errors/debug"
-	"github.com/berachain/stargazer/types/abi"
 )
 
 /**
@@ -49,7 +48,7 @@ type Executable func(
 	value *big.Int,
 	readonly bool,
 	args ...any,
-) (ret []any, logs []*coretypes.Log, err error)
+) (ret []any, err error)
 
 // `Method` is a struct that contains the required information for the EVM to execute a stateful
 // precompiled contract method.

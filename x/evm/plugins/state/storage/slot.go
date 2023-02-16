@@ -18,25 +18,27 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/berachain/stargazer/lib/common"
+	"github.com/berachain/stargazer/eth/common"
 	"github.com/berachain/stargazer/lib/errors"
 	libtypes "github.com/berachain/stargazer/lib/types"
 )
 
 // Compile-time interface assertions.
-var _ libtypes.Cloneable[Slot] = &Slot{}
-var _ fmt.Stringer = Slots{}
+var (
+	_ libtypes.Cloneable[*Slot] = (*Slot)(nil)
+	_ fmt.Stringer              = (*Slot)(nil)
+)
 
 // `NewSlot` creates a new State instance.
-func NewSlot(key, value common.Hash) Slot {
-	return Slot{
+func NewSlot(key, value common.Hash) *Slot {
+	return &Slot{
 		Key:   key.Hex(),
 		Value: value.Hex(),
 	}
 }
 
 // `ValidateBasic` checks to make sure the key is not empty.
-func (s Slot) ValidateBasic() error {
+func (s *Slot) ValidateBasic() error {
 	if strings.TrimSpace(s.Key) == "" {
 		return errors.Wrapf(ErrInvalidState, "key cannot be empty %s", s.Key)
 	}
@@ -45,8 +47,8 @@ func (s Slot) ValidateBasic() error {
 }
 
 // `Clone` implements `types.Cloneable`.
-func (s Slot) Clone() Slot {
-	return Slot{
+func (s *Slot) Clone() *Slot {
+	return &Slot{
 		Key:   s.Key,
 		Value: s.Value,
 	}

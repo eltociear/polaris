@@ -29,7 +29,7 @@ const (
 )
 
 func Lint() error {
-	cmds := []func() error{GolangCiLint, Gosec, LicenseCheck, ProtoLint}
+	cmds := []func() error{GolangCiLint, LicenseCheck, Gosec, ProtoLint}
 	for _, cmd := range cmds {
 		if err := cmd(); err != nil {
 			return err
@@ -109,7 +109,7 @@ func GoImportsLint() error {
 // Run `gosec`.
 func Gosec() error {
 	PrintMageName()
-	return goRun(gosec, "./...")
+	return goRun(gosec, "-exclude-generated", "./...")
 }
 
 // Run `addlicense`.

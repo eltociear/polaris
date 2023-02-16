@@ -43,6 +43,9 @@ var _ vm.StargazerStateDB = &StargazerStateDBMock{}
 //			AddressInAccessListFunc: func(addr common.Address) bool {
 //				panic("mock out the AddressInAccessList method")
 //			},
+//			BuildLogsAndClearFunc: func(txHash common.Hash, blockHash common.Hash, txIndex uint, logIndex uint) []*types.Log {
+//				panic("mock out the BuildLogsAndClear method")
+//			},
 //			CreateAccountFunc: func(address common.Address)  {
 //				panic("mock out the CreateAccount method")
 //			},
@@ -73,12 +76,6 @@ var _ vm.StargazerStateDB = &StargazerStateDBMock{}
 //			GetCommittedStateFunc: func(address common.Address, hash common.Hash) common.Hash {
 //				panic("mock out the GetCommittedState method")
 //			},
-//			GetContextFunc: func() context.Context {
-//				panic("mock out the GetContext method")
-//			},
-//			GetLogsAndClearFunc: func(txHash common.Hash) []*types.Log {
-//				panic("mock out the GetLogsAndClear method")
-//			},
 //			GetNonceFunc: func(address common.Address) uint64 {
 //				panic("mock out the GetNonce method")
 //			},
@@ -93,6 +90,9 @@ var _ vm.StargazerStateDB = &StargazerStateDBMock{}
 //			},
 //			PrepareAccessListFunc: func(sender common.Address, dest *common.Address, precompiles []common.Address, txAccesses types.AccessList)  {
 //				panic("mock out the PrepareAccessList method")
+//			},
+//			ResetFunc: func(contextMoqParam context.Context)  {
+//				panic("mock out the Reset method")
 //			},
 //			RevertToSnapshotFunc: func(n int)  {
 //				panic("mock out the RevertToSnapshot method")
@@ -152,6 +152,9 @@ type StargazerStateDBMock struct {
 	// AddressInAccessListFunc mocks the AddressInAccessList method.
 	AddressInAccessListFunc func(addr common.Address) bool
 
+	// BuildLogsAndClearFunc mocks the BuildLogsAndClear method.
+	BuildLogsAndClearFunc func(txHash common.Hash, blockHash common.Hash, txIndex uint, logIndex uint) []*types.Log
+
 	// CreateAccountFunc mocks the CreateAccount method.
 	CreateAccountFunc func(address common.Address)
 
@@ -182,12 +185,6 @@ type StargazerStateDBMock struct {
 	// GetCommittedStateFunc mocks the GetCommittedState method.
 	GetCommittedStateFunc func(address common.Address, hash common.Hash) common.Hash
 
-	// GetContextFunc mocks the GetContext method.
-	GetContextFunc func() context.Context
-
-	// GetLogsAndClearFunc mocks the GetLogsAndClear method.
-	GetLogsAndClearFunc func(txHash common.Hash) []*types.Log
-
 	// GetNonceFunc mocks the GetNonce method.
 	GetNonceFunc func(address common.Address) uint64
 
@@ -202,6 +199,9 @@ type StargazerStateDBMock struct {
 
 	// PrepareAccessListFunc mocks the PrepareAccessList method.
 	PrepareAccessListFunc func(sender common.Address, dest *common.Address, precompiles []common.Address, txAccesses types.AccessList)
+
+	// ResetFunc mocks the Reset method.
+	ResetFunc func(contextMoqParam context.Context)
 
 	// RevertToSnapshotFunc mocks the RevertToSnapshot method.
 	RevertToSnapshotFunc func(n int)
@@ -276,6 +276,17 @@ type StargazerStateDBMock struct {
 			// Addr is the addr argument value.
 			Addr common.Address
 		}
+		// BuildLogsAndClear holds details about calls to the BuildLogsAndClear method.
+		BuildLogsAndClear []struct {
+			// TxHash is the txHash argument value.
+			TxHash common.Hash
+			// BlockHash is the blockHash argument value.
+			BlockHash common.Hash
+			// TxIndex is the txIndex argument value.
+			TxIndex uint
+			// LogIndex is the logIndex argument value.
+			LogIndex uint
+		}
 		// CreateAccount holds details about calls to the CreateAccount method.
 		CreateAccount []struct {
 			// Address is the address argument value.
@@ -328,14 +339,6 @@ type StargazerStateDBMock struct {
 			// Hash is the hash argument value.
 			Hash common.Hash
 		}
-		// GetContext holds details about calls to the GetContext method.
-		GetContext []struct {
-		}
-		// GetLogsAndClear holds details about calls to the GetLogsAndClear method.
-		GetLogsAndClear []struct {
-			// TxHash is the txHash argument value.
-			TxHash common.Hash
-		}
 		// GetNonce holds details about calls to the GetNonce method.
 		GetNonce []struct {
 			// Address is the address argument value.
@@ -366,6 +369,11 @@ type StargazerStateDBMock struct {
 			Precompiles []common.Address
 			// TxAccesses is the txAccesses argument value.
 			TxAccesses types.AccessList
+		}
+		// Reset holds details about calls to the Reset method.
+		Reset []struct {
+			// ContextMoqParam is the contextMoqParam argument value.
+			ContextMoqParam context.Context
 		}
 		// RevertToSnapshot holds details about calls to the RevertToSnapshot method.
 		RevertToSnapshot []struct {
@@ -439,6 +447,7 @@ type StargazerStateDBMock struct {
 	lockAddRefund              sync.RWMutex
 	lockAddSlotToAccessList    sync.RWMutex
 	lockAddressInAccessList    sync.RWMutex
+	lockBuildLogsAndClear      sync.RWMutex
 	lockCreateAccount          sync.RWMutex
 	lockEmpty                  sync.RWMutex
 	lockExist                  sync.RWMutex
@@ -449,13 +458,12 @@ type StargazerStateDBMock struct {
 	lockGetCodeHash            sync.RWMutex
 	lockGetCodeSize            sync.RWMutex
 	lockGetCommittedState      sync.RWMutex
-	lockGetContext             sync.RWMutex
-	lockGetLogsAndClear        sync.RWMutex
 	lockGetNonce               sync.RWMutex
 	lockGetRefund              sync.RWMutex
 	lockGetState               sync.RWMutex
 	lockHasSuicided            sync.RWMutex
 	lockPrepareAccessList      sync.RWMutex
+	lockReset                  sync.RWMutex
 	lockRevertToSnapshot       sync.RWMutex
 	lockSetCode                sync.RWMutex
 	lockSetNonce               sync.RWMutex
@@ -701,6 +709,50 @@ func (mock *StargazerStateDBMock) AddressInAccessListCalls() []struct {
 	mock.lockAddressInAccessList.RLock()
 	calls = mock.calls.AddressInAccessList
 	mock.lockAddressInAccessList.RUnlock()
+	return calls
+}
+
+// BuildLogsAndClear calls BuildLogsAndClearFunc.
+func (mock *StargazerStateDBMock) BuildLogsAndClear(txHash common.Hash, blockHash common.Hash, txIndex uint, logIndex uint) []*types.Log {
+	if mock.BuildLogsAndClearFunc == nil {
+		panic("StargazerStateDBMock.BuildLogsAndClearFunc: method is nil but StargazerStateDB.BuildLogsAndClear was just called")
+	}
+	callInfo := struct {
+		TxHash    common.Hash
+		BlockHash common.Hash
+		TxIndex   uint
+		LogIndex  uint
+	}{
+		TxHash:    txHash,
+		BlockHash: blockHash,
+		TxIndex:   txIndex,
+		LogIndex:  logIndex,
+	}
+	mock.lockBuildLogsAndClear.Lock()
+	mock.calls.BuildLogsAndClear = append(mock.calls.BuildLogsAndClear, callInfo)
+	mock.lockBuildLogsAndClear.Unlock()
+	return mock.BuildLogsAndClearFunc(txHash, blockHash, txIndex, logIndex)
+}
+
+// BuildLogsAndClearCalls gets all the calls that were made to BuildLogsAndClear.
+// Check the length with:
+//
+//	len(mockedStargazerStateDB.BuildLogsAndClearCalls())
+func (mock *StargazerStateDBMock) BuildLogsAndClearCalls() []struct {
+	TxHash    common.Hash
+	BlockHash common.Hash
+	TxIndex   uint
+	LogIndex  uint
+} {
+	var calls []struct {
+		TxHash    common.Hash
+		BlockHash common.Hash
+		TxIndex   uint
+		LogIndex  uint
+	}
+	mock.lockBuildLogsAndClear.RLock()
+	calls = mock.calls.BuildLogsAndClear
+	mock.lockBuildLogsAndClear.RUnlock()
 	return calls
 }
 
@@ -1027,65 +1079,6 @@ func (mock *StargazerStateDBMock) GetCommittedStateCalls() []struct {
 	return calls
 }
 
-// GetContext calls GetContextFunc.
-func (mock *StargazerStateDBMock) GetContext() context.Context {
-	if mock.GetContextFunc == nil {
-		panic("StargazerStateDBMock.GetContextFunc: method is nil but StargazerStateDB.GetContext was just called")
-	}
-	callInfo := struct {
-	}{}
-	mock.lockGetContext.Lock()
-	mock.calls.GetContext = append(mock.calls.GetContext, callInfo)
-	mock.lockGetContext.Unlock()
-	return mock.GetContextFunc()
-}
-
-// GetContextCalls gets all the calls that were made to GetContext.
-// Check the length with:
-//
-//	len(mockedStargazerStateDB.GetContextCalls())
-func (mock *StargazerStateDBMock) GetContextCalls() []struct {
-} {
-	var calls []struct {
-	}
-	mock.lockGetContext.RLock()
-	calls = mock.calls.GetContext
-	mock.lockGetContext.RUnlock()
-	return calls
-}
-
-// GetLogsAndClear calls GetLogsAndClearFunc.
-func (mock *StargazerStateDBMock) GetLogsAndClear(txHash common.Hash) []*types.Log {
-	if mock.GetLogsAndClearFunc == nil {
-		panic("StargazerStateDBMock.GetLogsAndClearFunc: method is nil but StargazerStateDB.GetLogsAndClear was just called")
-	}
-	callInfo := struct {
-		TxHash common.Hash
-	}{
-		TxHash: txHash,
-	}
-	mock.lockGetLogsAndClear.Lock()
-	mock.calls.GetLogsAndClear = append(mock.calls.GetLogsAndClear, callInfo)
-	mock.lockGetLogsAndClear.Unlock()
-	return mock.GetLogsAndClearFunc(txHash)
-}
-
-// GetLogsAndClearCalls gets all the calls that were made to GetLogsAndClear.
-// Check the length with:
-//
-//	len(mockedStargazerStateDB.GetLogsAndClearCalls())
-func (mock *StargazerStateDBMock) GetLogsAndClearCalls() []struct {
-	TxHash common.Hash
-} {
-	var calls []struct {
-		TxHash common.Hash
-	}
-	mock.lockGetLogsAndClear.RLock()
-	calls = mock.calls.GetLogsAndClear
-	mock.lockGetLogsAndClear.RUnlock()
-	return calls
-}
-
 // GetNonce calls GetNonceFunc.
 func (mock *StargazerStateDBMock) GetNonce(address common.Address) uint64 {
 	if mock.GetNonceFunc == nil {
@@ -1254,6 +1247,38 @@ func (mock *StargazerStateDBMock) PrepareAccessListCalls() []struct {
 	mock.lockPrepareAccessList.RLock()
 	calls = mock.calls.PrepareAccessList
 	mock.lockPrepareAccessList.RUnlock()
+	return calls
+}
+
+// Reset calls ResetFunc.
+func (mock *StargazerStateDBMock) Reset(contextMoqParam context.Context) {
+	if mock.ResetFunc == nil {
+		panic("StargazerStateDBMock.ResetFunc: method is nil but StargazerStateDB.Reset was just called")
+	}
+	callInfo := struct {
+		ContextMoqParam context.Context
+	}{
+		ContextMoqParam: contextMoqParam,
+	}
+	mock.lockReset.Lock()
+	mock.calls.Reset = append(mock.calls.Reset, callInfo)
+	mock.lockReset.Unlock()
+	mock.ResetFunc(contextMoqParam)
+}
+
+// ResetCalls gets all the calls that were made to Reset.
+// Check the length with:
+//
+//	len(mockedStargazerStateDB.ResetCalls())
+func (mock *StargazerStateDBMock) ResetCalls() []struct {
+	ContextMoqParam context.Context
+} {
+	var calls []struct {
+		ContextMoqParam context.Context
+	}
+	mock.lockReset.RLock()
+	calls = mock.calls.Reset
+	mock.lockReset.RUnlock()
 	return calls
 }
 
