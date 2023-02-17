@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testnode-cluster
+  labels:
+    app: testnode
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: testnode
+  template:
+    metadata:
+      labels:
+        app: testnode
+    spec:
+      containers:
+      - name: jsonrpc
+        image: public.ecr.aws/d4k0c7i3/jsonrpc:latest
+        ports:
+          - containerPort: 8546
+            name: websocket-port
+          - containerPort: 8545
+            name: http-port
+      - name: proxy
+        image: kicbase/echo-server:1.0
+        ports:
+          - containerPort: 8080
+            name: http-port
