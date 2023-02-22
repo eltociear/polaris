@@ -44,7 +44,7 @@ func New(
 	cfg config.CosmosConnection,
 	logger *zap.Logger,
 ) *Client {
-	clientCtx, err := CreateClientContext(cfg)
+	clientCtx, err := CreateSigningClientContext(cfg)
 	if err != nil {
 		panic(err)
 	}

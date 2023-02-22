@@ -8,6 +8,7 @@ import (
 	"github.com/berachain/stargazer/services/base/config"
 	"github.com/berachain/stargazer/services/base/cosmos"
 	server "github.com/berachain/stargazer/services/base/server"
+	"github.com/berachain/stargazer/services/faucet/api"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -27,6 +28,7 @@ func NewFaucetServer() *FaucetServer {
 	cfg := config.DefaultSigningConfig()
 	// Create new cosmos client.
 	client := cosmos.New(ctx, cfg.Client, logger)
+
 	// Create new service
 	service := server.NewService(ctx, logger, client, cfg.Server)
 	// Add logging middleware.
@@ -66,8 +68,12 @@ func (s *FaucetServer) Notify() <-chan error {
 }
 
 func (s *FaucetServer) RegisterAPI() {
+	api := api.NewFaucetApi(s.service.GetCosmosClient())
 	s.service.GetEngine().GET("/ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
 	})
-
+	s.service.GetEngine().GET("/ding", func(c *gin.Context) {
+		api.GetBalance()
+		c.String(http.StatusOK, "pong")
+	})
 }

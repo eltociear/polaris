@@ -15,8 +15,8 @@
 package web3
 
 import (
-	"github.com/berachain/stargazer/lib/common/hexutil"
-	"github.com/berachain/stargazer/lib/crypto"
+	crypto "github.com/berachain/stargazer/crypto"
+	"github.com/berachain/stargazer/eth/common/hexutil"
 	libtypes "github.com/berachain/stargazer/lib/types"
 	"go.uber.org/zap/zapcore"
 )

@@ -16,13 +16,17 @@ package config
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"time"
 
-	"github.com/evmos/ethermint/crypto/hd"
-	"github.com/evmos/ethermint/encoding"
+	// "github.com/evmos/ethermint/crypto/hd"
+	// "github.com/evmos/ethermint/encoding"
 
+	"github.com/berachain/stargazer/crypto"
+	"github.com/berachain/stargazer/encoding"
 	config "github.com/berachain/stargazer/services/base/server/config"
+	"github.com/berachain/stargazer/simapp"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 )
 
@@ -94,7 +98,7 @@ const (
 	// `DefaultChainID` is the default chain ID.
 	DefaultChainID = "berachain_420-1"
 
-	DefaultKeyringFile        = ".keyring"
+	DefaultKeyringFile        = "test"
 	DefaultKeyringDir         = "./"
 	DefaultKeyringServiceName = "test"
 )
@@ -112,12 +116,30 @@ func DefaultCosmosConnection() *CosmosConnection {
 
 // DefaultRPC returns the default RPC configuration.
 func DefaultSigningCosmosConnection() *CosmosConnection {
-	DefaultEncodingConfig := encoding.MakeConfig(beramodules.GetModuleManager())
-	KeyringOptions := []keyring.Option{hd.EthSecp256k1Option()}
+	DefaultEncodingConfig := encoding.MakeConfig(simapp.ModuleBasics)
+	KeyringOptions := []keyring.Option{crypto.EthSecp256k1Option()}
 	buf := bufio.NewReader(os.Stdin)
 
-	DefaultKeyring, _ := keyring.New(DefaultKeyringServiceName, DefaultKeyringFile, DefaultKeyringDir, buf, DefaultEncodingConfig.Codec, KeyringOptions...)
+	DefaultKeyring, err := keyring.New(DefaultKeyringServiceName, DefaultKeyringFile, DefaultKeyringDir, buf, DefaultEncodingConfig.Codec, KeyringOptions...)
+	if err != nil {
+		panic(err)
+	}
+	priv := os.Getenv("PRIV_KEY")
+	pass := os.Getenv("PRIV_KEY_PASSWORD")
 
+	var algo keyring.SignatureAlgo = crypto.EthSecp256k1
+	hdPath := "m/44'/60'/0'/0/0" // Example HD path for Ethereum
+	// initialize new account
+	_, err = DefaultKeyring.NewAccount("deez", priv, pass, hdPath, algo)
+	if err != nil {
+		panic(err)
+	}
+	// z, _ := addr.GetAddress()
+	a, err := DefaultKeyring.Key("deez")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(a)
 	return &CosmosConnection{
 		CMRPCEndpoint: DefaultCMRPCEndpoint,
 		GRPCEndpoint:  DefaultGRPCAddress,

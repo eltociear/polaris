@@ -19,8 +19,8 @@ import (
 	"context"
 	"fmt"
 
+	tmclient "github.com/cometbft/cometbft/rpc/client"
 	"github.com/cosmos/cosmos-sdk/client"
-	tmclient "github.com/tendermint/tendermint/rpc/client"
 
 	libtypes "github.com/berachain/stargazer/lib/types"
 	"go.uber.org/zap/zapcore"

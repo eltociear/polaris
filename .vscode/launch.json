@@ -7,6 +7,14 @@
             "request": "launch",
             "mode": "auto",
             "program": "./cmd/jsonrpcd/main.go",
+        },
+        {
+            "name": "Debug Faucet",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "./cmd/faucetd/main.go",
+            "envFile": "/Users/garrettparris/Documents/stargazer/services/.env",
         }
     ]
 }

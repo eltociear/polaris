@@ -15,8 +15,8 @@
 package eth
 
 import (
-	"github.com/berachain/stargazer/lib/common"
-	"github.com/berachain/stargazer/lib/common/hexutil"
+	"github.com/berachain/stargazer/eth/common"
+	"github.com/berachain/stargazer/eth/common/hexutil"
 )
 
 // `GetUncleByBlockHashAndIndex` returns nil since there are no uncles in Tendermint.
