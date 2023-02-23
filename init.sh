@@ -19,7 +19,6 @@
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 # TITLE.
 
-
 KEYS[0]="dev0"
 KEYS[1]="dev1"
 KEYS[2]="dev2"
@@ -47,16 +46,16 @@ TMP_GENESIS=$HOMEDIR/config/tmp_genesis.json
 set -e
 
 # Reinstall daemon
-mage install
+# mage install
 
-# User prompt if an existing local node configuration is found.
-if [ -d "$HOMEDIR" ]; then
-	printf "\nAn existing folder at '%s' was found. You can choose to delete this folder and start a new local node with new keys from genesis. When declined, the existing local node is started. \n" "$HOMEDIR"
-	echo "Overwrite the existing configuration and start a new local node? [y/n]"
-	read -r overwrite
-else
-	overwrite="Y"
-fi
+# # User prompt if an existing local node configuration is found.
+# if [ -d "$HOMEDIR" ]; then
+# 	printf "\nAn existing folder at '%s' was found. You can choose to delete this folder and start a new local node with new keys from genesis. When declined, the existing local node is started. \n" "$HOMEDIR"
+# 	echo "Overwrite the existing configuration and start a new local node? [y/n]"
+# 	read -r overwrite
+# else
+overwrite="Y"
+# fi
 
 
 # Setup local node if overwrite is set to Yes, otherwise skip setup
@@ -64,7 +63,7 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	# Remove the previous folder
 	rm -rf "$HOMEDIR"
 
-    	# Set moniker and chain-id (Moniker can be anything, chain-id must be an integer)
+    # Set moniker and chain-id (Moniker can be anything, chain-id must be an integer)
 	stargazerd init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"
 
 	# Set client config
