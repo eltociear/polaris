@@ -32,7 +32,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	simapp "pkg.berachain.dev/stargazer/testutil/app"
-	"pkg.berachain.dev/stargazer/testutil/app/cmd/stargazerd/cmd"
+	cmd "pkg.berachain.dev/stargazer/testutil/app/cmd/stargazerd"
 )
 
 func TestCmd(t *testing.T) {
