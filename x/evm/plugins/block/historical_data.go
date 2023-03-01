@@ -22,7 +22,6 @@ package block
 
 import (
 	"fmt"
-	"math/big"
 
 	"cosmossdk.io/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -30,6 +29,8 @@ import (
 	"pkg.berachain.dev/stargazer/eth/common"
 	coretypes "pkg.berachain.dev/stargazer/eth/core/types"
 )
+
+const notFound = -5
 
 var (
 	blockHashKeyPrefix  = []byte{0xb}
@@ -98,46 +99,31 @@ func (p *plugin) GetStargazerBlockByHash(hash common.Hash) *coretypes.StargazerB
 	if bz == nil {
 		return nil
 	}
-	return p.GetStargazerBlockByNumber(new(big.Int).SetBytes(bz).Int64())
+	return p.GetStargazerBlockByNumber(int64(sdk.BigEndianToUint64(bz)))
 }
 
 // `GetTransactionByHash` returns the transaction with the given hash.
-func (p *plugin) GetTransactionByHash(hash common.Hash) *coretypes.Transaction {
+func (p *plugin) GetTransactionByHash(hash common.Hash) (*coretypes.Transaction, error) {
 	txStore := prefix.NewStore(p.offchainStore, txHashKeyPrefix)
 	bz := txStore.Get(hash.Bytes())
 	if bz == nil {
-		return nil
+		return nil, fmt.Errorf("transaction at hash %s not found", hash.Hex())
 	}
 	var tx coretypes.Transaction
 	err := tx.UnmarshalBinary(bz)
 	if err != nil {
 		p.ctx.Logger().Error("failed to unmarshal transaction", "err", err)
-		return nil
+		return nil, err
 	}
-	return &tx
+	return &tx, nil
 }
 
 // `GetTransactionBlockNumber` returns the block number of the transaction with the given hash.
-func (p *plugin) GetTransactionBlockNumber(txHash common.Hash) *big.Int {
+func (p *plugin) GetTransactionBlockNumber(txHash common.Hash) (int64, error) {
 	txBlockNumStore := prefix.NewStore(p.offchainStore, txBlockNumKeyPrefix)
 	bz := txBlockNumStore.Get(txHash.Bytes())
 	if bz == nil {
-		return nil
+		return notFound, fmt.Errorf("transaction at hash %s not found", txHash.Hex())
 	}
-	return new(big.Int).SetBytes(bz)
-}
-
-// `GetBlockHash` returns the block hash for the given block number.
-func (p *plugin) GetBlockHash(blockNum *big.Int) common.Hash {
-	blockNumStore := prefix.NewStore(p.offchainStore, blockNumKeyPrefix)
-	data := blockNumStore.Get(sdk.Uint64ToBigEndian(blockNum.Uint64()))
-	var block *coretypes.StargazerBlock
-	err := block.UnmarshalBinary(data)
-	if err != nil {
-		panic(fmt.Sprintf("failed to unmarshal block at height %d", blockNum.Uint64()))
-	}
-	if block == nil { //nolint:govet // investigate later.
-		return common.Hash{}
-	}
-	return block.Hash()
+	return int64(sdk.BigEndianToUint64(bz)), nil
 }

@@ -109,7 +109,8 @@ func (sp *StateProcessor) Prepare(ctx context.Context, height int64) {
 	sp.gp.Prepare(ctx)
 
 	// Build a block object so we can track that status of the block as we process it.
-	sp.block = types.NewStargazerBlock(sp.bp.GetStargazerHeaderByNumber(height))
+	header, _ := sp.bp.GetStargazerHeaderByNumber(height)
+	sp.block = types.NewStargazerBlock(header)
 
 	// Ensure that the gas plugin and header are in sync.
 	if sp.block.GasLimit != sp.gp.BlockGasLimit() {
@@ -138,15 +139,15 @@ func (sp *StateProcessor) Prepare(ctx context.Context, height int64) {
 func (sp *StateProcessor) ProcessTransaction(
 	ctx context.Context, tx *types.Transaction,
 ) (*types.Receipt, error) {
+	txHash := tx.Hash()
 	msg, err := tx.AsMessage(sp.signer, sp.block.BaseFee)
 	if err != nil {
-		return nil, errors.Wrapf(err, "could not apply tx %d [%v]", sp.block.TxIndex(), tx.Hash().Hex())
+		return nil, errors.Wrapf(err, "could not apply tx %d [%v]", sp.block.TxIndex(), txHash.Hex())
 	}
 
 	// Create a new context to be used in the EVM environment and tx context for the StateDB.
 	txContext := NewEVMTxContext(msg)
 	sp.evm.SetTxContext(txContext)
-	txHash := tx.Hash()
 	sp.statedb.SetTxContext(txHash, sp.block.TxIndex())
 
 	// We also must reset the StateDB and precompile and gas plugins.
@@ -158,13 +159,13 @@ func (sp *StateProcessor) ProcessTransaction(
 	// ASSUMPTION: That the host chain has not consumped the intrinsic gas yet.
 	gasPool := GasPool(sp.gp.BlockGasLimit() - sp.gp.CumulativeGasUsed())
 	if err = sp.gp.SetTxGasLimit(msg.Gas()); err != nil {
-		return nil, errors.Wrapf(err, "could not set gas plugin limit %d [%v]", sp.block.TxIndex(), tx.Hash().Hex())
+		return nil, errors.Wrapf(err, "could not set gas plugin limit %d [%v]", sp.block.TxIndex(), txHash.Hex())
 	}
 
 	// Apply the state transition.
 	result, err := ApplyMessage(sp.evm.UnderlyingEVM(), msg, &gasPool)
 	if err != nil {
-		return nil, errors.Wrapf(err, "could not apply message %d [%v]", sp.block.TxIndex(), tx.Hash().Hex())
+		return nil, errors.Wrapf(err, "could not apply message %d [%v]", sp.block.TxIndex(), txHash.Hex())
 	}
 
 	// Consume the gas used by the state tranisition.

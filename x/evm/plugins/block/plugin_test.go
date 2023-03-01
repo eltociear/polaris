@@ -40,7 +40,7 @@ var _ = Describe("Block Plugin", func() {
 
 	BeforeEach(func() {
 		ctx = testutil.NewContext().WithBlockGasMeter(storetypes.NewGasMeter(uint64(10000)))
-		sk := testutil.EvmKey // testing key.
+		sk := testutil.EvmKey
 		p = utils.MustGetAs[*plugin](NewPlugin(offchain.NewFromDB(dbm.NewMemDB()), sk))
 		p.Prepare(ctx)
 	})
