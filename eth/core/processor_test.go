@@ -234,8 +234,8 @@ var _ = Describe("No precompile plugin provided", func() {
 		bp := mock.NewBlockPluginMock()
 		gp := mock.NewGasPluginMock()
 		gp.SetBlockGasLimit(1000000)
-		bp.GetStargazerHeaderByNumberFunc = func(height int64) *types.StargazerHeader {
-			header := types.NewEmptyStargazerHeader()
+		bp.GetStargazerHeaderByNumberFunc = func(height int64) *types.Header {
+			header := &types.Header{}
 			header.GasLimit = 1000000
 			header.Number = new(big.Int)
 			header.Difficulty = new(big.Int)

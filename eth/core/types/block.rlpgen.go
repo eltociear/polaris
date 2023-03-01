@@ -13,63 +13,57 @@ import "io"
 func (obj *StargazerBlock) EncodeRLP(_w io.Writer) error {
 	w := rlp.NewEncoderBuffer(_w)
 	_tmp0 := w.List()
-	if obj.StargazerHeader == nil {
+	if obj.Header == nil {
 		w.Write([]byte{0xC0})
 	} else {
 		_tmp1 := w.List()
-		if obj.StargazerHeader.Header == nil {
-			w.Write([]byte{0xC0})
+		w.WriteBytes(obj.Header.ParentHash[:])
+		w.WriteBytes(obj.Header.UncleHash[:])
+		w.WriteBytes(obj.Header.Coinbase[:])
+		w.WriteBytes(obj.Header.Root[:])
+		w.WriteBytes(obj.Header.TxHash[:])
+		w.WriteBytes(obj.Header.ReceiptHash[:])
+		w.WriteBytes(obj.Header.Bloom[:])
+		if obj.Header.Difficulty == nil {
+			w.Write(rlp.EmptyString)
 		} else {
-			_tmp2 := w.List()
-			w.WriteBytes(obj.StargazerHeader.Header.ParentHash[:])
-			w.WriteBytes(obj.StargazerHeader.Header.UncleHash[:])
-			w.WriteBytes(obj.StargazerHeader.Header.Coinbase[:])
-			w.WriteBytes(obj.StargazerHeader.Header.Root[:])
-			w.WriteBytes(obj.StargazerHeader.Header.TxHash[:])
-			w.WriteBytes(obj.StargazerHeader.Header.ReceiptHash[:])
-			w.WriteBytes(obj.StargazerHeader.Header.Bloom[:])
-			if obj.StargazerHeader.Header.Difficulty == nil {
+			if obj.Header.Difficulty.Sign() == -1 {
+				return rlp.ErrNegativeBigInt
+			}
+			w.WriteBigInt(obj.Header.Difficulty)
+		}
+		if obj.Header.Number == nil {
+			w.Write(rlp.EmptyString)
+		} else {
+			if obj.Header.Number.Sign() == -1 {
+				return rlp.ErrNegativeBigInt
+			}
+			w.WriteBigInt(obj.Header.Number)
+		}
+		w.WriteUint64(obj.Header.GasLimit)
+		w.WriteUint64(obj.Header.GasUsed)
+		w.WriteUint64(obj.Header.Time)
+		w.WriteBytes(obj.Header.Extra)
+		w.WriteBytes(obj.Header.MixDigest[:])
+		w.WriteBytes(obj.Header.Nonce[:])
+		_tmp2 := obj.Header.BaseFee != nil
+		_tmp3 := obj.Header.WithdrawalsHash != nil
+		if _tmp2 || _tmp3 {
+			if obj.Header.BaseFee == nil {
 				w.Write(rlp.EmptyString)
 			} else {
-				if obj.StargazerHeader.Header.Difficulty.Sign() == -1 {
+				if obj.Header.BaseFee.Sign() == -1 {
 					return rlp.ErrNegativeBigInt
 				}
-				w.WriteBigInt(obj.StargazerHeader.Header.Difficulty)
+				w.WriteBigInt(obj.Header.BaseFee)
 			}
-			if obj.StargazerHeader.Header.Number == nil {
-				w.Write(rlp.EmptyString)
+		}
+		if _tmp3 {
+			if obj.Header.WithdrawalsHash == nil {
+				w.Write([]byte{0x80})
 			} else {
-				if obj.StargazerHeader.Header.Number.Sign() == -1 {
-					return rlp.ErrNegativeBigInt
-				}
-				w.WriteBigInt(obj.StargazerHeader.Header.Number)
+				w.WriteBytes(obj.Header.WithdrawalsHash[:])
 			}
-			w.WriteUint64(obj.StargazerHeader.Header.GasLimit)
-			w.WriteUint64(obj.StargazerHeader.Header.GasUsed)
-			w.WriteUint64(obj.StargazerHeader.Header.Time)
-			w.WriteBytes(obj.StargazerHeader.Header.Extra)
-			w.WriteBytes(obj.StargazerHeader.Header.MixDigest[:])
-			w.WriteBytes(obj.StargazerHeader.Header.Nonce[:])
-			_tmp3 := obj.StargazerHeader.Header.BaseFee != nil
-			_tmp4 := obj.StargazerHeader.Header.WithdrawalsHash != nil
-			if _tmp3 || _tmp4 {
-				if obj.StargazerHeader.Header.BaseFee == nil {
-					w.Write(rlp.EmptyString)
-				} else {
-					if obj.StargazerHeader.Header.BaseFee.Sign() == -1 {
-						return rlp.ErrNegativeBigInt
-					}
-					w.WriteBigInt(obj.StargazerHeader.Header.BaseFee)
-				}
-			}
-			if _tmp4 {
-				if obj.StargazerHeader.Header.WithdrawalsHash == nil {
-					w.Write([]byte{0x80})
-				} else {
-					w.WriteBytes(obj.StargazerHeader.Header.WithdrawalsHash[:])
-				}
-			}
-			w.ListEnd(_tmp2)
 		}
 		w.ListEnd(_tmp1)
 	}
@@ -83,134 +77,123 @@ func (obj *StargazerBlock) DecodeRLP(dec *rlp.Stream) error {
 		if _, err := dec.List(); err != nil {
 			return err
 		}
-		// StargazerHeader:
-		var _tmp1 StargazerHeader
+		// Header:
+		var _tmp1 types.Header
 		{
 			if _, err := dec.List(); err != nil {
 				return err
 			}
-			// Header:
-			var _tmp2 types.Header
-			{
-				if _, err := dec.List(); err != nil {
-					return err
-				}
-				// ParentHash:
-				var _tmp3 common.Hash
-				if err := dec.ReadBytes(_tmp3[:]); err != nil {
-					return err
-				}
-				_tmp2.ParentHash = _tmp3
-				// UncleHash:
-				var _tmp4 common.Hash
-				if err := dec.ReadBytes(_tmp4[:]); err != nil {
-					return err
-				}
-				_tmp2.UncleHash = _tmp4
-				// Coinbase:
-				var _tmp5 common.Address
-				if err := dec.ReadBytes(_tmp5[:]); err != nil {
-					return err
-				}
-				_tmp2.Coinbase = _tmp5
-				// Root:
-				var _tmp6 common.Hash
-				if err := dec.ReadBytes(_tmp6[:]); err != nil {
-					return err
-				}
-				_tmp2.Root = _tmp6
-				// TxHash:
-				var _tmp7 common.Hash
-				if err := dec.ReadBytes(_tmp7[:]); err != nil {
-					return err
-				}
-				_tmp2.TxHash = _tmp7
-				// ReceiptHash:
-				var _tmp8 common.Hash
-				if err := dec.ReadBytes(_tmp8[:]); err != nil {
-					return err
-				}
-				_tmp2.ReceiptHash = _tmp8
-				// Bloom:
-				var _tmp9 types.Bloom
-				if err := dec.ReadBytes(_tmp9[:]); err != nil {
-					return err
-				}
-				_tmp2.Bloom = _tmp9
-				// Difficulty:
-				_tmp10, err := dec.BigInt()
+			// ParentHash:
+			var _tmp2 common.Hash
+			if err := dec.ReadBytes(_tmp2[:]); err != nil {
+				return err
+			}
+			_tmp1.ParentHash = _tmp2
+			// UncleHash:
+			var _tmp3 common.Hash
+			if err := dec.ReadBytes(_tmp3[:]); err != nil {
+				return err
+			}
+			_tmp1.UncleHash = _tmp3
+			// Coinbase:
+			var _tmp4 common.Address
+			if err := dec.ReadBytes(_tmp4[:]); err != nil {
+				return err
+			}
+			_tmp1.Coinbase = _tmp4
+			// Root:
+			var _tmp5 common.Hash
+			if err := dec.ReadBytes(_tmp5[:]); err != nil {
+				return err
+			}
+			_tmp1.Root = _tmp5
+			// TxHash:
+			var _tmp6 common.Hash
+			if err := dec.ReadBytes(_tmp6[:]); err != nil {
+				return err
+			}
+			_tmp1.TxHash = _tmp6
+			// ReceiptHash:
+			var _tmp7 common.Hash
+			if err := dec.ReadBytes(_tmp7[:]); err != nil {
+				return err
+			}
+			_tmp1.ReceiptHash = _tmp7
+			// Bloom:
+			var _tmp8 types.Bloom
+			if err := dec.ReadBytes(_tmp8[:]); err != nil {
+				return err
+			}
+			_tmp1.Bloom = _tmp8
+			// Difficulty:
+			_tmp9, err := dec.BigInt()
+			if err != nil {
+				return err
+			}
+			_tmp1.Difficulty = _tmp9
+			// Number:
+			_tmp10, err := dec.BigInt()
+			if err != nil {
+				return err
+			}
+			_tmp1.Number = _tmp10
+			// GasLimit:
+			_tmp11, err := dec.Uint64()
+			if err != nil {
+				return err
+			}
+			_tmp1.GasLimit = _tmp11
+			// GasUsed:
+			_tmp12, err := dec.Uint64()
+			if err != nil {
+				return err
+			}
+			_tmp1.GasUsed = _tmp12
+			// Time:
+			_tmp13, err := dec.Uint64()
+			if err != nil {
+				return err
+			}
+			_tmp1.Time = _tmp13
+			// Extra:
+			_tmp14, err := dec.Bytes()
+			if err != nil {
+				return err
+			}
+			_tmp1.Extra = _tmp14
+			// MixDigest:
+			var _tmp15 common.Hash
+			if err := dec.ReadBytes(_tmp15[:]); err != nil {
+				return err
+			}
+			_tmp1.MixDigest = _tmp15
+			// Nonce:
+			var _tmp16 types.BlockNonce
+			if err := dec.ReadBytes(_tmp16[:]); err != nil {
+				return err
+			}
+			_tmp1.Nonce = _tmp16
+			// BaseFee:
+			if dec.MoreDataInList() {
+				_tmp17, err := dec.BigInt()
 				if err != nil {
 					return err
 				}
-				_tmp2.Difficulty = _tmp10
-				// Number:
-				_tmp11, err := dec.BigInt()
-				if err != nil {
-					return err
-				}
-				_tmp2.Number = _tmp11
-				// GasLimit:
-				_tmp12, err := dec.Uint64()
-				if err != nil {
-					return err
-				}
-				_tmp2.GasLimit = _tmp12
-				// GasUsed:
-				_tmp13, err := dec.Uint64()
-				if err != nil {
-					return err
-				}
-				_tmp2.GasUsed = _tmp13
-				// Time:
-				_tmp14, err := dec.Uint64()
-				if err != nil {
-					return err
-				}
-				_tmp2.Time = _tmp14
-				// Extra:
-				_tmp15, err := dec.Bytes()
-				if err != nil {
-					return err
-				}
-				_tmp2.Extra = _tmp15
-				// MixDigest:
-				var _tmp16 common.Hash
-				if err := dec.ReadBytes(_tmp16[:]); err != nil {
-					return err
-				}
-				_tmp2.MixDigest = _tmp16
-				// Nonce:
-				var _tmp17 types.BlockNonce
-				if err := dec.ReadBytes(_tmp17[:]); err != nil {
-					return err
-				}
-				_tmp2.Nonce = _tmp17
-				// BaseFee:
+				_tmp1.BaseFee = _tmp17
+				// WithdrawalsHash:
 				if dec.MoreDataInList() {
-					_tmp18, err := dec.BigInt()
-					if err != nil {
+					var _tmp18 common.Hash
+					if err := dec.ReadBytes(_tmp18[:]); err != nil {
 						return err
 					}
-					_tmp2.BaseFee = _tmp18
-					// WithdrawalsHash:
-					if dec.MoreDataInList() {
-						var _tmp19 common.Hash
-						if err := dec.ReadBytes(_tmp19[:]); err != nil {
-							return err
-						}
-						_tmp2.WithdrawalsHash = &_tmp19
-					}
-				}
-				if err := dec.ListEnd(); err != nil {
-					return err
+					_tmp1.WithdrawalsHash = &_tmp18
 				}
 			}
-			_tmp1.Header = &_tmp2
 			if err := dec.ListEnd(); err != nil {
 				return err
 			}
 		}
-		_tmp0.StargazerHeader = &_tmp1
+		_tmp0.Header = &_tmp1
 		if err := dec.ListEnd(); err != nil {
 			return err
 		}

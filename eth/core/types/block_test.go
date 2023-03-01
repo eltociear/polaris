@@ -32,7 +32,7 @@ import (
 var _ = Describe("Block", func() {
 	var r types.Receipts
 	var txs types.Transactions
-	var sh *types.StargazerHeader
+	var sh *types.Header
 	var sb *types.StargazerBlock
 
 	BeforeEach(func() {
@@ -56,7 +56,7 @@ var _ = Describe("Block", func() {
 				},
 			},
 		}
-		sh = types.NewEmptyStargazerHeader()
+		sh = &types.Header{}
 		sb = types.NewStargazerBlock(sh)
 	})
 

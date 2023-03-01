@@ -33,8 +33,8 @@ import (
 )
 
 // `CurrentHeader` returns the current header of the blockchain.
-func (bc *blockchain) CurrentHeader() *types.StargazerHeader {
-	return bc.processor.block.StargazerHeader
+func (bc *blockchain) CurrentHeader() *types.Header {
+	return bc.processor.block.Header
 }
 
 // `CurrentBlock` returns the current block of the blockchain.

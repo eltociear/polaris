@@ -199,7 +199,7 @@ func (b *backend) CurrentHeader() *types.Header {
 	if header == nil {
 		return nil
 	}
-	return header.Header
+	return header
 }
 
 // `CurrentBlock` returns the current block from the local chain.

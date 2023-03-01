@@ -58,7 +58,7 @@ type ChainWriter interface {
 
 // `ChainReader` defines methods that are used to read the state and blocks of the chain.
 type ChainReader interface {
-	CurrentHeader() *types.StargazerHeader
+	CurrentHeader() *types.Header
 	CurrentBlock() *types.StargazerBlock
 	FinalizedBlock() *types.StargazerBlock
 	GetStargazerBlockByHash(common.Hash) *types.StargazerBlock

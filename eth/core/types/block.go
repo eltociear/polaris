@@ -37,7 +37,7 @@ const initialTransactionsCapacity = 256
 //
 //go:generate rlpgen -type StargazerBlock -out block.rlpgen.go -decoder
 type StargazerBlock struct {
-	*StargazerHeader
+	*Header
 	txs      Transactions
 	receipts Receipts
 	// `logIndex` is the index of the current log in the current block
@@ -45,11 +45,11 @@ type StargazerBlock struct {
 }
 
 // `NewStargazerBlock` creates a new StargazerBlock from the given header.
-func NewStargazerBlock(header *StargazerHeader) *StargazerBlock {
+func NewStargazerBlock(header *Header) *StargazerBlock {
 	return &StargazerBlock{
-		StargazerHeader: header,
-		txs:             make(Transactions, 0, initialTransactionsCapacity),
-		receipts:        make(Receipts, 0, initialTransactionsCapacity),
+		Header:   header,
+		txs:      make(Transactions, 0, initialTransactionsCapacity),
+		receipts: make(Receipts, 0, initialTransactionsCapacity),
 	}
 }
 
@@ -104,17 +104,17 @@ func (sb *StargazerBlock) GetTransactions() Transactions {
 // `Finalize` sets the gas used, transaction hash, receipt hash, and optionally bloom of the block
 // header.
 func (sb *StargazerBlock) Finalize(gasUsed uint64) {
-	sb.StargazerHeader.UncleHash = EmptyUncleHash
-	sb.StargazerHeader.GasUsed = gasUsed
+	sb.Header.UncleHash = EmptyUncleHash
+	sb.Header.GasUsed = gasUsed
 
 	hasher := trie.NewStackTrie(nil)
 	if len(sb.txs) == 0 {
-		sb.StargazerHeader.TxHash = EmptyRootHash
-		sb.StargazerHeader.ReceiptHash = EmptyRootHash
+		sb.Header.TxHash = EmptyRootHash
+		sb.Header.ReceiptHash = EmptyRootHash
 	} else {
-		sb.StargazerHeader.TxHash = DeriveSha(sb.txs, hasher)
-		sb.StargazerHeader.ReceiptHash = DeriveSha(sb.receipts, hasher)
-		sb.StargazerHeader.Bloom = CreateBloom(sb.receipts)
+		sb.Header.TxHash = DeriveSha(sb.txs, hasher)
+		sb.Header.ReceiptHash = DeriveSha(sb.receipts, hasher)
+		sb.Header.Bloom = CreateBloom(sb.receipts)
 	}
 }
 

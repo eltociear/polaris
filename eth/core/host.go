@@ -64,7 +64,7 @@ type (
 		// `BlockPlugin` to a default state.
 		libtypes.Preparable
 		// `GetStargazerHeaderByNumber` returns the block header at the given block height.
-		GetStargazerHeaderByNumber(int64) *types.StargazerHeader
+		GetStargazerHeaderByNumber(int64) *types.Header
 		// `GetStargazerHeaderByNumber` returns the block header at the given block height.
 		GetStargazerBlockByNumber(int64) *types.StargazerBlock
 		// `GetStargazerBlockByHash` returns the block at the given block hash.
@@ -77,13 +77,13 @@ type (
 		BaseFee() uint64
 		// `TrackHistoricalStargazerHeader` saves the latest historical-info and deletes the oldest
 		// heights that are below pruning height.
-		TrackHistoricalStargazerHeader(ctx sdk.Context, header *types.StargazerHeader)
+		TrackHistoricalStargazerHeader(ctx sdk.Context, header *types.Header)
 		// `GetStargazerBlock` returns the block from the store at the height specified in the context.
-		GetStargazerHeader(ctx sdk.Context, height int64) (*types.StargazerHeader, bool)
+		GetStargazerHeader(ctx sdk.Context, height int64) (*types.Header, bool)
 		// `SetStargazerHeader` saves a block to the store.
-		SetStargazerHeader(ctx sdk.Context, header *types.StargazerHeader) error
+		SetStargazerHeader(ctx sdk.Context, header *types.Header) error
 		// `PruneStargazerHeader` prunes a stargazer block from the store.
-		PruneStargazerHeader(ctx sdk.Context, header *types.StargazerHeader) error
+		PruneStargazerHeader(ctx sdk.Context, header *types.Header) error
 	}
 
 	// `GasPlugin` is an interface that allows the Stargazer EVM to consume gas on the host chain.
