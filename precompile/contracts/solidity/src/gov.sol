@@ -43,6 +43,13 @@ interface IGovernanceModule {
     function execLegacyContent(bytes calldata content, string memory authority)
         external;
 
+    function vote(
+        uint256 proposalId,
+        string memory voter,
+        int32 option,
+        string memory metadata
+    ) external;
+
     //////////////////////////////////////////// UTILS ////////////////////////////////////////////
     /**
      * @dev Represents a cosmos coin.
