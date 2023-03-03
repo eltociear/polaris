@@ -21,3 +21,4 @@
 package solidity
 
 //go:generate abigen --pkg generated --abi ./out/staking.sol/IStakingModule.abi.json --bin ./out/staking.sol/IStakingModule.bin --out ./generated/i_staking_module.abigen.go --type StakingModule
+//go:generate abigen --pkg generated --abi ./out/gov.sol/IGovernanceModule.abi.json --bin ./out/gov.sol/IGovernanceModule.bin --out ./generated/i_governance_module.abigen.go --type GovernanceModule
