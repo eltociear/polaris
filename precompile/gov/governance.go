@@ -1,6 +1,9 @@
 package gov
 
 import (
+	"context"
+	"math/big"
+
 	governancekeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	governancetypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	v1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
@@ -9,6 +12,7 @@ import (
 	"pkg.berachain.dev/stargazer/eth/accounts/abi"
 	"pkg.berachain.dev/stargazer/eth/common"
 	"pkg.berachain.dev/stargazer/eth/core/precompile"
+	"pkg.berachain.dev/stargazer/lib/utils"
 	"pkg.berachain.dev/stargazer/precompile/contracts/solidity/generated"
 	evmutils "pkg.berachain.dev/stargazer/x/evm/utils"
 )
@@ -29,8 +33,8 @@ func NewContract(gk **governancekeeper.Keeper) precompile.StatefulImpl {
 	}
 	return &Contract{
 		contractAbi: &contractAbi,
-		msgServer:   governancekeeper.NewLegacyMsgServerImpl(*gk),
-		querier:     governancekeeper.Keeper{},
+		msgServer:   governancekeeper.NewMsgServerImpl(*gk),
+		querier:     *gk,
 	}
 }
 
@@ -52,4 +56,28 @@ func (c *Contract) ABIEvents() map[string]abi.Event {
 // `CustomValueDecoders` implements the `precompile.StatefulImpl` interface.
 func (c *Contract) CustomValueDecoders() precompile.ValueDecoders {
 	return nil
+}
+
+// `PrecompileMethods` implements the `precompile.StatefulImpl` interface.
+func (c *Contract) PrecompileMethods() precompile.Methods {
+	return precompile.Methods{
+		&precompile.Method{
+			AbiSig: "submitProposal(bytes,[]tuple,string,string,string,string,bool)",
+		},
+	}
+}
+
+// `SubmitProposal` is the method for the `submitProposal` method of the governance precompile contract.
+func (c *Contract) SubmitProposal(
+	ctx context.Context,
+	caller common.Address,
+	value *big.Int,
+	readonly bool,
+	args ...any,
+) ([]any, error) {
+	message, ok := utils.GetAs[[]byte](args[0])
+	if !ok {
+		return nil, ErrInvalidBytes
+	}
+
 }
