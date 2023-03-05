@@ -40,3 +40,19 @@ func (c *Contract) submitProposalHelper(
 
 	return []any{big.NewInt(int64(res.ProposalId))}, nil
 }
+
+func (c *Contract) cancelProposalHelper(
+	ctx context.Context,
+	proposer sdk.AccAddress,
+	proposalID *big.Int,
+) ([]any, error) {
+	res, err := c.msgServer.CancelProposal(ctx, &v1.MsgCancelProposal{
+		ProposalId: proposalID.Uint64(),
+		Proposer:   proposer.String(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return []any{big.NewInt(int64(res.ProposalId))}, nil
+}

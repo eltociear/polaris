@@ -4,12 +4,12 @@ import (
 	"context"
 	"math/big"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	governancekeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	governancetypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	v1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"pkg.berachain.dev/stargazer/eth/accounts/abi"
 	"pkg.berachain.dev/stargazer/eth/common"
@@ -64,13 +64,14 @@ func (c *Contract) CustomValueDecoders() precompile.ValueDecoders {
 func (c *Contract) PrecompileMethods() precompile.Methods {
 	return precompile.Methods{
 		&precompile.Method{
-			AbiSig: "submitProposal(bytes,[]tuple,string,string,string,string,bool)",
+			AbiSig:  "submitProposal(bytes,[]tuple,string,string,string,bool)",
+			Execute: c.SubmitProposal,
 		},
 	}
 }
 
 // `SubmitProposal` is the method for the `submitProposal` method of the governance precompile contract.
-func (c *Contract) SubmitProposalStringAddr(
+func (c *Contract) SubmitProposal(
 	ctx context.Context,
 	caller common.Address,
 	value *big.Int,
@@ -85,30 +86,42 @@ func (c *Contract) SubmitProposalStringAddr(
 	if !ok {
 		return nil, ErrInvalidCoins
 	}
-	proposer, ok := utils.GetAs[string](args[2])
+	metadata, ok := utils.GetAs[string](args[2])
 	if !ok {
 		return nil, ErrInvalidString
 	}
-	metadata, ok := utils.GetAs[string](args[3])
+	title, ok := utils.GetAs[string](args[3])
 	if !ok {
 		return nil, ErrInvalidString
 	}
-	title, ok := utils.GetAs[string](args[4])
+	summary, ok := utils.GetAs[string](args[4])
 	if !ok {
 		return nil, ErrInvalidString
 	}
-	summary, ok := utils.GetAs[string](args[5])
-	if !ok {
-		return nil, ErrInvalidString
-	}
-	expedited, ok := utils.GetAs[bool](args[6])
+	expedited, ok := utils.GetAs[bool](args[5])
 	if !ok {
 		return nil, ErrInvalidBool
 	}
-	proposerAddr, err := sdk.AccAddressFromBech32(proposer)
-	if err != nil {
-		return nil, err
-	}
 
-	return c.submitProposalHelper(ctx, message, initialDeposit, proposerAddr, metadata, title, summary, expedited)
+	// Caller is the proposer (msg.sender).
+	proposer := sdk.AccAddress(caller.Bytes())
+
+	return c.submitProposalHelper(ctx, message, initialDeposit, proposer, metadata, title, summary, expedited)
+}
+
+// `CancelProposal` is the method for the `cancelProposal` method of the governance precompile contract.
+func (c *Contract) CancelProposalStringAddr(
+	ctx context.Context,
+	caller common.Address,
+	value *big.Int,
+	readonly bool,
+	args ...any,
+) ([]any, error) {
+	id, ok := utils.GetAs[*big.Int](args[0])
+	if !ok {
+		return nil, ErrInvalidBigint
+	}
+	proposer := sdk.AccAddress(caller.Bytes())
+
+	return c.cancelProposalHelper(ctx, proposer, id)
 }

@@ -25,14 +25,13 @@ interface IGovernanceModule {
     function submitProposal(
         bytes calldata message,
         Coin[] memory initialDeposit,
-        string memory proposer,
         string memory metadata,
         string memory title,
         string memory summary,
         bool expedited
     ) external returns (uint256);
 
-    function cancelProposal(uint256 proposalId, string memory proposer)
+    function cancelProposal(uint256 proposalId)
         external
         returns (
             uint256,
