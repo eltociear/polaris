@@ -8,6 +8,8 @@ import (
 	governancetypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	v1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"pkg.berachain.dev/stargazer/eth/accounts/abi"
 	"pkg.berachain.dev/stargazer/eth/common"
@@ -68,16 +70,45 @@ func (c *Contract) PrecompileMethods() precompile.Methods {
 }
 
 // `SubmitProposal` is the method for the `submitProposal` method of the governance precompile contract.
-func (c *Contract) SubmitProposal(
+func (c *Contract) SubmitProposalStringAddr(
 	ctx context.Context,
 	caller common.Address,
 	value *big.Int,
 	readonly bool,
 	args ...any,
 ) ([]any, error) {
-	message, ok := utils.GetAs[[]byte](args[0])
+	message, ok := utils.GetAs[[]*codectypes.Any](args[0]) // TODO: check if this is the correct type.
 	if !ok {
 		return nil, ErrInvalidBytes
 	}
+	initialDeposit, ok := utils.GetAs[[]generated.IGovernanceModuleCoin](args[1])
+	if !ok {
+		return nil, ErrInvalidCoins
+	}
+	proposer, ok := utils.GetAs[string](args[2])
+	if !ok {
+		return nil, ErrInvalidString
+	}
+	metadata, ok := utils.GetAs[string](args[3])
+	if !ok {
+		return nil, ErrInvalidString
+	}
+	title, ok := utils.GetAs[string](args[4])
+	if !ok {
+		return nil, ErrInvalidString
+	}
+	summary, ok := utils.GetAs[string](args[5])
+	if !ok {
+		return nil, ErrInvalidString
+	}
+	expedited, ok := utils.GetAs[bool](args[6])
+	if !ok {
+		return nil, ErrInvalidBool
+	}
+	proposerAddr, err := sdk.AccAddressFromBech32(proposer)
+	if err != nil {
+		return nil, err
+	}
 
+	return c.submitProposalHelper(ctx, message, initialDeposit, proposerAddr, metadata, title, summary, expedited)
 }

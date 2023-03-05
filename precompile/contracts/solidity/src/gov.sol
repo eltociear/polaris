@@ -53,9 +53,10 @@ interface IGovernanceModule {
     //////////////////////////////////////////// UTILS ////////////////////////////////////////////
     /**
      * @dev Represents a cosmos coin.
+     * Note: this struct is generated in precompile/generated/i_staking_module.abigen.go
      */
     struct Coin {
         uint256 amount;
-        uint256 denom;
+        string denom;
     }
 }

@@ -32,12 +32,12 @@ var (
 // IGovernanceModuleCoin is an auto generated low-level Go binding around an user-defined struct.
 type IGovernanceModuleCoin struct {
 	Amount *big.Int
-	Denom  *big.Int
+	Denom  string
 }
 
 // GovernanceModuleMetaData contains all meta data concerning the GovernanceModule contract.
 var GovernanceModuleMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"proposer\",\"type\":\"string\"}],\"name\":\"cancelProposal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"content\",\"type\":\"bytes\"},{\"internalType\":\"string\",\"name\":\"authority\",\"type\":\"string\"}],\"name\":\"execLegacyContent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"message\",\"type\":\"bytes\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"denom\",\"type\":\"uint256\"}],\"internalType\":\"structIGovernanceModule.Coin[]\",\"name\":\"initialDeposit\",\"type\":\"tuple[]\"},{\"internalType\":\"string\",\"name\":\"proposer\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"metadata\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"summary\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"expedited\",\"type\":\"bool\"}],\"name\":\"submitProposal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"voter\",\"type\":\"string\"},{\"internalType\":\"int32\",\"name\":\"option\",\"type\":\"int32\"},{\"internalType\":\"string\",\"name\":\"metadata\",\"type\":\"string\"}],\"name\":\"vote\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"proposer\",\"type\":\"string\"}],\"name\":\"cancelProposal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"content\",\"type\":\"bytes\"},{\"internalType\":\"string\",\"name\":\"authority\",\"type\":\"string\"}],\"name\":\"execLegacyContent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"message\",\"type\":\"bytes\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"denom\",\"type\":\"string\"}],\"internalType\":\"structIGovernanceModule.Coin[]\",\"name\":\"initialDeposit\",\"type\":\"tuple[]\"},{\"internalType\":\"string\",\"name\":\"proposer\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"metadata\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"summary\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"expedited\",\"type\":\"bool\"}],\"name\":\"submitProposal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"voter\",\"type\":\"string\"},{\"internalType\":\"int32\",\"name\":\"option\",\"type\":\"int32\"},{\"internalType\":\"string\",\"name\":\"metadata\",\"type\":\"string\"}],\"name\":\"vote\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
 // GovernanceModuleABI is the input ABI used to generate the binding from.
@@ -228,23 +228,23 @@ func (_GovernanceModule *GovernanceModuleTransactorSession) ExecLegacyContent(co
 	return _GovernanceModule.Contract.ExecLegacyContent(&_GovernanceModule.TransactOpts, content, authority)
 }
 
-// SubmitProposal is a paid mutator transaction binding the contract method 0x21a52af7.
+// SubmitProposal is a paid mutator transaction binding the contract method 0x5eb4d829.
 //
-// Solidity: function submitProposal(bytes message, (uint256,uint256)[] initialDeposit, string proposer, string metadata, string title, string summary, bool expedited) returns(uint256)
+// Solidity: function submitProposal(bytes message, (uint256,string)[] initialDeposit, string proposer, string metadata, string title, string summary, bool expedited) returns(uint256)
 func (_GovernanceModule *GovernanceModuleTransactor) SubmitProposal(opts *bind.TransactOpts, message []byte, initialDeposit []IGovernanceModuleCoin, proposer string, metadata string, title string, summary string, expedited bool) (*types.Transaction, error) {
 	return _GovernanceModule.contract.Transact(opts, "submitProposal", message, initialDeposit, proposer, metadata, title, summary, expedited)
 }
 
-// SubmitProposal is a paid mutator transaction binding the contract method 0x21a52af7.
+// SubmitProposal is a paid mutator transaction binding the contract method 0x5eb4d829.
 //
-// Solidity: function submitProposal(bytes message, (uint256,uint256)[] initialDeposit, string proposer, string metadata, string title, string summary, bool expedited) returns(uint256)
+// Solidity: function submitProposal(bytes message, (uint256,string)[] initialDeposit, string proposer, string metadata, string title, string summary, bool expedited) returns(uint256)
 func (_GovernanceModule *GovernanceModuleSession) SubmitProposal(message []byte, initialDeposit []IGovernanceModuleCoin, proposer string, metadata string, title string, summary string, expedited bool) (*types.Transaction, error) {
 	return _GovernanceModule.Contract.SubmitProposal(&_GovernanceModule.TransactOpts, message, initialDeposit, proposer, metadata, title, summary, expedited)
 }
 
-// SubmitProposal is a paid mutator transaction binding the contract method 0x21a52af7.
+// SubmitProposal is a paid mutator transaction binding the contract method 0x5eb4d829.
 //
-// Solidity: function submitProposal(bytes message, (uint256,uint256)[] initialDeposit, string proposer, string metadata, string title, string summary, bool expedited) returns(uint256)
+// Solidity: function submitProposal(bytes message, (uint256,string)[] initialDeposit, string proposer, string metadata, string title, string summary, bool expedited) returns(uint256)
 func (_GovernanceModule *GovernanceModuleTransactorSession) SubmitProposal(message []byte, initialDeposit []IGovernanceModuleCoin, proposer string, metadata string, title string, summary string, expedited bool) (*types.Transaction, error) {
 	return _GovernanceModule.Contract.SubmitProposal(&_GovernanceModule.TransactOpts, message, initialDeposit, proposer, metadata, title, summary, expedited)
 }
