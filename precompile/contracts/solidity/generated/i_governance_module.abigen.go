@@ -35,9 +35,15 @@ type IGovernanceModuleCoin struct {
 	Denom  string
 }
 
+// IGovernanceModuleWeightedVoteOption is an auto generated low-level Go binding around an user-defined struct.
+type IGovernanceModuleWeightedVoteOption struct {
+	VoteOption int32
+	Weight     string
+}
+
 // GovernanceModuleMetaData contains all meta data concerning the GovernanceModule contract.
 var GovernanceModuleMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"proposer\",\"type\":\"string\"}],\"name\":\"cancelProposal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"content\",\"type\":\"bytes\"},{\"internalType\":\"string\",\"name\":\"authority\",\"type\":\"string\"}],\"name\":\"execLegacyContent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"message\",\"type\":\"bytes\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"denom\",\"type\":\"string\"}],\"internalType\":\"structIGovernanceModule.Coin[]\",\"name\":\"initialDeposit\",\"type\":\"tuple[]\"},{\"internalType\":\"string\",\"name\":\"proposer\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"metadata\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"summary\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"expedited\",\"type\":\"bool\"}],\"name\":\"submitProposal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"voter\",\"type\":\"string\"},{\"internalType\":\"int32\",\"name\":\"option\",\"type\":\"int32\"},{\"internalType\":\"string\",\"name\":\"metadata\",\"type\":\"string\"}],\"name\":\"vote\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalId\",\"type\":\"uint256\"}],\"name\":\"cancelProposal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"content\",\"type\":\"bytes\"},{\"internalType\":\"string\",\"name\":\"authority\",\"type\":\"string\"}],\"name\":\"execLegacyContent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"message\",\"type\":\"bytes\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"denom\",\"type\":\"string\"}],\"internalType\":\"structIGovernanceModule.Coin[]\",\"name\":\"initialDeposit\",\"type\":\"tuple[]\"},{\"internalType\":\"string\",\"name\":\"metadata\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"summary\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"expedited\",\"type\":\"bool\"}],\"name\":\"submitProposal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalId\",\"type\":\"uint256\"},{\"internalType\":\"int32\",\"name\":\"option\",\"type\":\"int32\"},{\"internalType\":\"string\",\"name\":\"metadata\",\"type\":\"string\"}],\"name\":\"vote\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalId\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"int32\",\"name\":\"voteOption\",\"type\":\"int32\"},{\"internalType\":\"string\",\"name\":\"weight\",\"type\":\"string\"}],\"internalType\":\"structIGovernanceModule.WeightedVoteOption[]\",\"name\":\"options\",\"type\":\"tuple[]\"},{\"internalType\":\"string\",\"name\":\"metadata\",\"type\":\"string\"}],\"name\":\"voteWeighted\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
 // GovernanceModuleABI is the input ABI used to generate the binding from.
@@ -186,25 +192,25 @@ func (_GovernanceModule *GovernanceModuleTransactorRaw) Transact(opts *bind.Tran
 	return _GovernanceModule.Contract.contract.Transact(opts, method, params...)
 }
 
-// CancelProposal is a paid mutator transaction binding the contract method 0xa351f615.
+// CancelProposal is a paid mutator transaction binding the contract method 0xe0a8f6f5.
 //
-// Solidity: function cancelProposal(uint256 proposalId, string proposer) returns(uint256, uint256, uint256)
-func (_GovernanceModule *GovernanceModuleTransactor) CancelProposal(opts *bind.TransactOpts, proposalId *big.Int, proposer string) (*types.Transaction, error) {
-	return _GovernanceModule.contract.Transact(opts, "cancelProposal", proposalId, proposer)
+// Solidity: function cancelProposal(uint256 proposalId) returns(uint256, uint256, uint256)
+func (_GovernanceModule *GovernanceModuleTransactor) CancelProposal(opts *bind.TransactOpts, proposalId *big.Int) (*types.Transaction, error) {
+	return _GovernanceModule.contract.Transact(opts, "cancelProposal", proposalId)
 }
 
-// CancelProposal is a paid mutator transaction binding the contract method 0xa351f615.
+// CancelProposal is a paid mutator transaction binding the contract method 0xe0a8f6f5.
 //
-// Solidity: function cancelProposal(uint256 proposalId, string proposer) returns(uint256, uint256, uint256)
-func (_GovernanceModule *GovernanceModuleSession) CancelProposal(proposalId *big.Int, proposer string) (*types.Transaction, error) {
-	return _GovernanceModule.Contract.CancelProposal(&_GovernanceModule.TransactOpts, proposalId, proposer)
+// Solidity: function cancelProposal(uint256 proposalId) returns(uint256, uint256, uint256)
+func (_GovernanceModule *GovernanceModuleSession) CancelProposal(proposalId *big.Int) (*types.Transaction, error) {
+	return _GovernanceModule.Contract.CancelProposal(&_GovernanceModule.TransactOpts, proposalId)
 }
 
-// CancelProposal is a paid mutator transaction binding the contract method 0xa351f615.
+// CancelProposal is a paid mutator transaction binding the contract method 0xe0a8f6f5.
 //
-// Solidity: function cancelProposal(uint256 proposalId, string proposer) returns(uint256, uint256, uint256)
-func (_GovernanceModule *GovernanceModuleTransactorSession) CancelProposal(proposalId *big.Int, proposer string) (*types.Transaction, error) {
-	return _GovernanceModule.Contract.CancelProposal(&_GovernanceModule.TransactOpts, proposalId, proposer)
+// Solidity: function cancelProposal(uint256 proposalId) returns(uint256, uint256, uint256)
+func (_GovernanceModule *GovernanceModuleTransactorSession) CancelProposal(proposalId *big.Int) (*types.Transaction, error) {
+	return _GovernanceModule.Contract.CancelProposal(&_GovernanceModule.TransactOpts, proposalId)
 }
 
 // ExecLegacyContent is a paid mutator transaction binding the contract method 0x65ae68f0.
@@ -228,44 +234,65 @@ func (_GovernanceModule *GovernanceModuleTransactorSession) ExecLegacyContent(co
 	return _GovernanceModule.Contract.ExecLegacyContent(&_GovernanceModule.TransactOpts, content, authority)
 }
 
-// SubmitProposal is a paid mutator transaction binding the contract method 0x5eb4d829.
+// SubmitProposal is a paid mutator transaction binding the contract method 0x4259573d.
 //
-// Solidity: function submitProposal(bytes message, (uint256,string)[] initialDeposit, string proposer, string metadata, string title, string summary, bool expedited) returns(uint256)
-func (_GovernanceModule *GovernanceModuleTransactor) SubmitProposal(opts *bind.TransactOpts, message []byte, initialDeposit []IGovernanceModuleCoin, proposer string, metadata string, title string, summary string, expedited bool) (*types.Transaction, error) {
-	return _GovernanceModule.contract.Transact(opts, "submitProposal", message, initialDeposit, proposer, metadata, title, summary, expedited)
+// Solidity: function submitProposal(bytes message, (uint256,string)[] initialDeposit, string metadata, string title, string summary, bool expedited) returns(uint256)
+func (_GovernanceModule *GovernanceModuleTransactor) SubmitProposal(opts *bind.TransactOpts, message []byte, initialDeposit []IGovernanceModuleCoin, metadata string, title string, summary string, expedited bool) (*types.Transaction, error) {
+	return _GovernanceModule.contract.Transact(opts, "submitProposal", message, initialDeposit, metadata, title, summary, expedited)
 }
 
-// SubmitProposal is a paid mutator transaction binding the contract method 0x5eb4d829.
+// SubmitProposal is a paid mutator transaction binding the contract method 0x4259573d.
 //
-// Solidity: function submitProposal(bytes message, (uint256,string)[] initialDeposit, string proposer, string metadata, string title, string summary, bool expedited) returns(uint256)
-func (_GovernanceModule *GovernanceModuleSession) SubmitProposal(message []byte, initialDeposit []IGovernanceModuleCoin, proposer string, metadata string, title string, summary string, expedited bool) (*types.Transaction, error) {
-	return _GovernanceModule.Contract.SubmitProposal(&_GovernanceModule.TransactOpts, message, initialDeposit, proposer, metadata, title, summary, expedited)
+// Solidity: function submitProposal(bytes message, (uint256,string)[] initialDeposit, string metadata, string title, string summary, bool expedited) returns(uint256)
+func (_GovernanceModule *GovernanceModuleSession) SubmitProposal(message []byte, initialDeposit []IGovernanceModuleCoin, metadata string, title string, summary string, expedited bool) (*types.Transaction, error) {
+	return _GovernanceModule.Contract.SubmitProposal(&_GovernanceModule.TransactOpts, message, initialDeposit, metadata, title, summary, expedited)
 }
 
-// SubmitProposal is a paid mutator transaction binding the contract method 0x5eb4d829.
+// SubmitProposal is a paid mutator transaction binding the contract method 0x4259573d.
 //
-// Solidity: function submitProposal(bytes message, (uint256,string)[] initialDeposit, string proposer, string metadata, string title, string summary, bool expedited) returns(uint256)
-func (_GovernanceModule *GovernanceModuleTransactorSession) SubmitProposal(message []byte, initialDeposit []IGovernanceModuleCoin, proposer string, metadata string, title string, summary string, expedited bool) (*types.Transaction, error) {
-	return _GovernanceModule.Contract.SubmitProposal(&_GovernanceModule.TransactOpts, message, initialDeposit, proposer, metadata, title, summary, expedited)
+// Solidity: function submitProposal(bytes message, (uint256,string)[] initialDeposit, string metadata, string title, string summary, bool expedited) returns(uint256)
+func (_GovernanceModule *GovernanceModuleTransactorSession) SubmitProposal(message []byte, initialDeposit []IGovernanceModuleCoin, metadata string, title string, summary string, expedited bool) (*types.Transaction, error) {
+	return _GovernanceModule.Contract.SubmitProposal(&_GovernanceModule.TransactOpts, message, initialDeposit, metadata, title, summary, expedited)
 }
 
-// Vote is a paid mutator transaction binding the contract method 0x242691da.
+// Vote is a paid mutator transaction binding the contract method 0xe53d8868.
 //
-// Solidity: function vote(uint256 proposalId, string voter, int32 option, string metadata) returns()
-func (_GovernanceModule *GovernanceModuleTransactor) Vote(opts *bind.TransactOpts, proposalId *big.Int, voter string, option int32, metadata string) (*types.Transaction, error) {
-	return _GovernanceModule.contract.Transact(opts, "vote", proposalId, voter, option, metadata)
+// Solidity: function vote(uint256 proposalId, int32 option, string metadata) returns()
+func (_GovernanceModule *GovernanceModuleTransactor) Vote(opts *bind.TransactOpts, proposalId *big.Int, option int32, metadata string) (*types.Transaction, error) {
+	return _GovernanceModule.contract.Transact(opts, "vote", proposalId, option, metadata)
 }
 
-// Vote is a paid mutator transaction binding the contract method 0x242691da.
+// Vote is a paid mutator transaction binding the contract method 0xe53d8868.
 //
-// Solidity: function vote(uint256 proposalId, string voter, int32 option, string metadata) returns()
-func (_GovernanceModule *GovernanceModuleSession) Vote(proposalId *big.Int, voter string, option int32, metadata string) (*types.Transaction, error) {
-	return _GovernanceModule.Contract.Vote(&_GovernanceModule.TransactOpts, proposalId, voter, option, metadata)
+// Solidity: function vote(uint256 proposalId, int32 option, string metadata) returns()
+func (_GovernanceModule *GovernanceModuleSession) Vote(proposalId *big.Int, option int32, metadata string) (*types.Transaction, error) {
+	return _GovernanceModule.Contract.Vote(&_GovernanceModule.TransactOpts, proposalId, option, metadata)
 }
 
-// Vote is a paid mutator transaction binding the contract method 0x242691da.
+// Vote is a paid mutator transaction binding the contract method 0xe53d8868.
 //
-// Solidity: function vote(uint256 proposalId, string voter, int32 option, string metadata) returns()
-func (_GovernanceModule *GovernanceModuleTransactorSession) Vote(proposalId *big.Int, voter string, option int32, metadata string) (*types.Transaction, error) {
-	return _GovernanceModule.Contract.Vote(&_GovernanceModule.TransactOpts, proposalId, voter, option, metadata)
+// Solidity: function vote(uint256 proposalId, int32 option, string metadata) returns()
+func (_GovernanceModule *GovernanceModuleTransactorSession) Vote(proposalId *big.Int, option int32, metadata string) (*types.Transaction, error) {
+	return _GovernanceModule.Contract.Vote(&_GovernanceModule.TransactOpts, proposalId, option, metadata)
+}
+
+// VoteWeighted is a paid mutator transaction binding the contract method 0xc87e2e4a.
+//
+// Solidity: function voteWeighted(uint256 proposalId, (int32,string)[] options, string metadata) returns()
+func (_GovernanceModule *GovernanceModuleTransactor) VoteWeighted(opts *bind.TransactOpts, proposalId *big.Int, options []IGovernanceModuleWeightedVoteOption, metadata string) (*types.Transaction, error) {
+	return _GovernanceModule.contract.Transact(opts, "voteWeighted", proposalId, options, metadata)
+}
+
+// VoteWeighted is a paid mutator transaction binding the contract method 0xc87e2e4a.
+//
+// Solidity: function voteWeighted(uint256 proposalId, (int32,string)[] options, string metadata) returns()
+func (_GovernanceModule *GovernanceModuleSession) VoteWeighted(proposalId *big.Int, options []IGovernanceModuleWeightedVoteOption, metadata string) (*types.Transaction, error) {
+	return _GovernanceModule.Contract.VoteWeighted(&_GovernanceModule.TransactOpts, proposalId, options, metadata)
+}
+
+// VoteWeighted is a paid mutator transaction binding the contract method 0xc87e2e4a.
+//
+// Solidity: function voteWeighted(uint256 proposalId, (int32,string)[] options, string metadata) returns()
+func (_GovernanceModule *GovernanceModuleTransactorSession) VoteWeighted(proposalId *big.Int, options []IGovernanceModuleWeightedVoteOption, metadata string) (*types.Transaction, error) {
+	return _GovernanceModule.Contract.VoteWeighted(&_GovernanceModule.TransactOpts, proposalId, options, metadata)
 }

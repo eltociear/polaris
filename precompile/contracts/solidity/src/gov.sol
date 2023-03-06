@@ -24,10 +24,10 @@ interface IGovernanceModule {
     ////////////////////////////////////////// Write Methods /////////////////////////////////////////////
     function submitProposal(
         bytes calldata message,
-        Coin[] memory initialDeposit,
-        string memory metadata,
-        string memory title,
-        string memory summary,
+        Coin[] calldata initialDeposit,
+        string calldata metadata,
+        string calldata title,
+        string calldata summary,
         bool expedited
     ) external returns (uint256);
 
@@ -39,14 +39,21 @@ interface IGovernanceModule {
             uint256
         );
 
-    function execLegacyContent(bytes calldata content, string memory authority)
-        external;
+    function execLegacyContent(
+        bytes calldata content,
+        string calldata authority
+    ) external;
 
     function vote(
         uint256 proposalId,
-        string memory voter,
         int32 option,
         string memory metadata
+    ) external;
+
+    function voteWeighted(
+        uint256 proposalId,
+        WeightedVoteOption[] calldata options,
+        string calldata metadata
     ) external;
 
     //////////////////////////////////////////// UTILS ////////////////////////////////////////////
@@ -57,5 +64,14 @@ interface IGovernanceModule {
     struct Coin {
         uint256 amount;
         string denom;
+    }
+
+    /**
+     * @dev Represents a governance module `WeightedVoteOption`.
+     * Note: this struct is generated in precompile/generated/i_staking_module.abigen.go
+     */
+    struct WeightedVoteOption {
+        int32 voteOption;
+        string weight;
     }
 }
