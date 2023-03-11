@@ -4,14 +4,12 @@ go 1.20
 
 replace github.com/ethereum/go-ethereum => github.com/berachain/go-ethereum v0.0.0-20230306205832-364e922bfe8d
 
-replace pkg.berachain.dev/polaris/eth => ../../eth
-
 replace pkg.berachain.dev/polaris/lib => ../../lib
 
 require (
 	github.com/rs/zerolog v1.29.0
 	github.com/spf13/cobra v1.6.1
-	pkg.berachain.dev/polaris/eth v0.0.0-00010101000000-000000000000
+	pkg.berachain.dev/polaris/eth v0.0.0-20230311063951-d1bb1d8dc12d
 
 )
 

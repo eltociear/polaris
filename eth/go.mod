@@ -4,14 +4,11 @@ go 1.20
 
 replace github.com/ethereum/go-ethereum => github.com/berachain/go-ethereum v0.0.0-20230306205832-364e922bfe8d
 
-// TODO: REMOVE WHEN PKG SERVER IS FIXED
-replace pkg.berachain.dev/polaris/lib => ../lib
-
 require (
 	github.com/ethereum/go-ethereum v1.11.4
 	github.com/onsi/ginkgo/v2 v2.9.0
 	github.com/onsi/gomega v1.27.3
-	pkg.berachain.dev/polaris/lib v0.0.1-alpha.0.20230310235258-2728d13bae51
+	pkg.berachain.dev/polaris/lib v0.0.0-20230311063951-d1bb1d8dc12d
 )
 
 require (
