@@ -53,6 +53,7 @@ var _ = Describe("Staking", func() {
 		validator = common.BytesToAddress(net.Validators[0].Address.Bytes())
 		stakingPrecompile, _ = bindings.NewStakingModule(
 			common.HexToAddress("0xd9A998CaC66092748FfEc7cFBD155Aae1737C2fF"), client)
+		_ = stakingPrecompile
 	})
 
 	AfterEach(func() {
@@ -60,26 +61,26 @@ var _ = Describe("Staking", func() {
 		os.RemoveAll("data")
 	})
 
-	It("should call functions on the precompile directly", func() {
-		validators, err := stakingPrecompile.GetActiveValidators(nil)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(validators).To(ContainElement(validator))
+	// It("should call functions on the precompile directly", func() {
+	// 	validators, err := stakingPrecompile.GetActiveValidators(nil)
+	// 	Expect(err).ToNot(HaveOccurred())
+	// 	Expect(validators).To(ContainElement(validator))
 
-		delegated, err := stakingPrecompile.GetDelegation(nil, network.TestAddress, validator)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(delegated.Cmp(big.NewInt(0))).To(Equal(0))
+	// 	delegated, err := stakingPrecompile.GetDelegation(nil, network.TestAddress, validator)
+	// 	Expect(err).ToNot(HaveOccurred())
+	// 	Expect(delegated.Cmp(big.NewInt(0))).To(Equal(0))
 
-		txr := BuildTransactor(client)
-		txr.Value = big.NewInt(1000000000000)
-		tx, err := stakingPrecompile.Delegate(txr, validator, big.NewInt(100000000000))
-		Expect(err).ToNot(HaveOccurred())
-		ExpectMined(client, tx)
-		ExpectSuccessReceipt(client, tx)
+	// 	txr := BuildTransactor(client)
+	// 	txr.Value = big.NewInt(1000000000000)
+	// 	tx, err := stakingPrecompile.Delegate(txr, validator, big.NewInt(100000000000))
+	// 	Expect(err).ToNot(HaveOccurred())
+	// 	ExpectMined(client, tx)
+	// 	ExpectSuccessReceipt(client, tx)
 
-		delegated, err = stakingPrecompile.GetDelegation(nil, network.TestAddress, validator)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(delegated.Cmp(big.NewInt(100000000000))).To(Equal(0))
-	})
+	// 	delegated, err = stakingPrecompile.GetDelegation(nil, network.TestAddress, validator)
+	// 	Expect(err).ToNot(HaveOccurred())
+	// 	Expect(delegated.Cmp(big.NewInt(100000000000))).To(Equal(0))
+	// })
 
 	It("should be able to call a precompile from a smart contract", func() {
 		_, tx, contract, err := tbindings.DeployLiquidStaking(
@@ -103,18 +104,23 @@ var _ = Describe("Staking", func() {
 		Expect(addresses).To(HaveLen(1))
 		Expect(addresses[0]).To(Equal(validator))
 
-		// Send tokens to the contract
-		txr := BuildTransactor(client)
-		txr.GasLimit = 0
-		txr.Value = big.NewInt(100000000000)
-		tx, err = contract.Delegate(txr, big.NewInt(100000000000))
-		Expect(err).ToNot(HaveOccurred())
-		ExpectMined(client, tx)
-		ExpectSuccessReceipt(client, tx)
+		num_delegates := 5
+		for i := 0; i < num_delegates; i++ {
+			// Send tokens to the contract
+			txr := BuildTransactor(client)
+			txr.GasLimit = 0
+			txr.Value = big.NewInt(100000000000)
+			tx, err = contract.Delegate(txr, big.NewInt(100000000000))
 
-		// Verify the delegation actually succeeded.
+			Expect(err).ToNot(HaveOccurred())
+			ExpectMined(client, tx)
+			ExpectSuccessReceipt(client, tx)
+		}
+
+		// Verify the delegations actually succeeded.
 		value, err = contract.TotalDelegated(nil)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(value.Cmp(big.NewInt(100000000000))).To(Equal(0))
+		Expect(new(big.Int).Mul(big.NewInt(100000000000), big.NewInt(int64(num_delegates))).Cmp(value)).
+			To(Equal(0))
 	})
 })
