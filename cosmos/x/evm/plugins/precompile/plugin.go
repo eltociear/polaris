@@ -69,12 +69,10 @@ type plugin struct {
 // NewPlugin creates and returns a `plugin` with the default kv gas configs.
 func NewPlugin(precompiles []vm.RegistrablePrecompile) Plugin {
 	return &plugin{
-		Registry:    registry.NewMap[common.Address, vm.PrecompileContainer](),
-		precompiles: precompiles,
-		// TODO: Re-enable gas config for precompiles.
-		// https://github.com/berachain/polaris/issues/393
-		kvGasConfig:          storetypes.GasConfig{},
-		transientKVGasConfig: storetypes.GasConfig{},
+		Registry:             registry.NewMap[common.Address, vm.PrecompileContainer](),
+		precompiles:          precompiles,
+		kvGasConfig:          storetypes.KVGasConfig(),
+		transientKVGasConfig: storetypes.TransientGasConfig(),
 		plf:                  log.NewFactory(precompiles),
 	}
 }
